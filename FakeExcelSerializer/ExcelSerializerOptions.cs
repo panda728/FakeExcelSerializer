@@ -13,6 +13,7 @@ public record ExcelSerializerOptions(IExcelSerializerProvider Provider)
 
     public bool AutoFitColumns { get; init; } = false;
     public int AutoFitDepth { get; init; } = 200;
+    public int AutoFitWidhtMax { get; init; } = 100;
     public string WorkPath { get; init; } = "";
 
     public string DateTimeFormat { get; init; } = "yyyy/mm/dd hh:mm;@";
