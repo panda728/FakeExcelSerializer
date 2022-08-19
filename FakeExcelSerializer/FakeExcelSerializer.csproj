@@ -11,6 +11,8 @@
     <Company />
     <Description>FakeExcelSerialiser converts object into Excel file</Description>
     <PackageProjectUrl>https://github.com/panda728/FakeExcelSerializer</PackageProjectUrl>
+    <Copyright>Copyright (c) Hideyuki Kitao 2022</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
