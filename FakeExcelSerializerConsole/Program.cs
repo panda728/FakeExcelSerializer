@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Globalization;
 using static Bogus.DataSets.Name;
 
+var sw = Stopwatch.StartNew();
+
 Randomizer.Seed = new Random(8675309);
 
 var fruit = new[] { "apple", "banana", "orange", "strawberry", "kiwi" };
@@ -46,6 +48,11 @@ var testUsers = new Faker<User>()
     });
 
 var Users = testUsers.Generate(100000);
+
+sw.Stop();
+Console.WriteLine($"testUsers.Generate count:{Users.Count:#,##0} duration:{sw.ElapsedMilliseconds:#,##0}ms");
+sw.Restart();
+
 var newConfig = ExcelSerializerOptions.Default with
 {
     CultureInfo = CultureInfo.InvariantCulture,
@@ -58,8 +65,21 @@ var newConfig = ExcelSerializerOptions.Default with
     AutoFitColumns = true,
 };
 
+var fileName = "test.xlsx";
 var builder = new ExcelSerializer(newConfig);
-builder.ToFile(Users, "test.xlsx");
+builder.ToFile(Users, fileName);
+
+sw.Stop();
+
+Console.WriteLine($"ExcelSerializer.ToFile duration:{sw.ElapsedMilliseconds:#,##0}ms");
+
+Console.WriteLine($"Excel file created. Please check the file. {fileName}");
+
+Console.WriteLine();
+Console.WriteLine("press any key...");
+
+Console.ReadLine();
+
 
 public class BoolZeroOneSerializer : IExcelSerializer<bool>
 {
