@@ -18,6 +18,6 @@ Cysharp様のWebSerializerの方式を使用しています。
 
   https://github.com/Cysharp/WebSerializer
   
-### CSV ライクなデータ出力のバージョンもあります
+### CSV ライクなデータを出力するバージョンはこちら
   
   https://github.com/panda728/FakeCsvSerializer
