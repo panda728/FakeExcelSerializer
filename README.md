@@ -16,4 +16,8 @@ Cysharp様のWebSerializerの方式を使用しています。
 
 効率的でなおかつ拡張性もある非常に素晴らしい構成です。
 
-https://github.com/Cysharp/WebSerializer
+  https://github.com/Cysharp/WebSerializer
+  
+### CSV ライクなデータ出力のバージョンもあります
+  
+  https://github.com/panda728/FakeExcelSerializer
