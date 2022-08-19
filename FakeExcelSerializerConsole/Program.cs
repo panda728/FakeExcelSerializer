@@ -65,14 +65,12 @@ var newConfig = ExcelSerializerOptions.Default with
     AutoFitColumns = true,
 };
 
-var fileName = "test.xlsx";
-var builder = new ExcelSerializer(newConfig);
-builder.ToFile(Users, fileName);
+var fileName = Path.Combine(Environment.CurrentDirectory, "test.xlsx");
+ExcelSerializer.ToFile(Users, fileName, newConfig);
 
 sw.Stop();
 
 Console.WriteLine($"ExcelSerializer.ToFile duration:{sw.ElapsedMilliseconds:#,##0}ms");
-
 Console.WriteLine($"Excel file created. Please check the file. {fileName}");
 
 Console.WriteLine();
