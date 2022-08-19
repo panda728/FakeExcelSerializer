@@ -1,4 +1,4 @@
 # FakeExcelSerializer
 
-IEnumerable<<'T>>をExcelファイル(.xlsx)に変換します。
+IEnumerable'<T>をExcelファイル(.xlsx)に変換します。
 
