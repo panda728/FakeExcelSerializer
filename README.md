@@ -20,4 +20,4 @@ Cysharp様のWebSerializerの方式を使用しています。
   
 ### CSV ライクなデータ出力のバージョンもあります
   
-  https://github.com/panda728/FakeExcelSerializer
+  https://github.com/panda728/FakeCsvSerializer
