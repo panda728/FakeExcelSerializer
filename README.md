@@ -17,7 +17,7 @@ ExcelSerializer.ToFile(Users, "test.xlsx", ExcelSerializerOptions.Default);
 
 ### Note
 
-For the method of retrieving values from IEnumerable<T>, Cysharp's WebSerializer method is used.
+For the method of retrieving values from IEnumerable\<T\>, Cysharp's WebSerializer method is used.
 
 　https://github.com/Cysharp/WebSerializer
   
