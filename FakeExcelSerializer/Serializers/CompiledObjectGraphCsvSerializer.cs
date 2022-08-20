@@ -59,6 +59,8 @@ internal sealed class CompiledObjectGraphExcelSerializer<T> : IExcelSerializer<T
         // foreach(members)
         //   if (value.Foo != null) // reference type || nullable type
         //     options.GetRequiredSerializer<T>() || ((ICsvSerialzier<T>)alternateSerializers[0] .Serialize(writer, value.Foo, options)
+        //   else
+        //     writer.WriteEmpty();
 
         var argWriterRef = Expression.Parameter(typeof(ExcelSerializerWriter).MakeByRefType());
         var argAlternateSerializers = Expression.Parameter(typeof(IExcelSerializer[]));
@@ -69,8 +71,6 @@ internal sealed class CompiledObjectGraphExcelSerializer<T> : IExcelSerializer<T
         var i = 0;
         foreach (var memberInfo in memberInfos)
         {
-            var writeBody = new List<Expression>();
-
             Expression serializer;
             if (memberInfo.ExcelSerializer == null)
             {
@@ -83,24 +83,20 @@ internal sealed class CompiledObjectGraphExcelSerializer<T> : IExcelSerializer<T
                     typeof(IExcelSerializer<>).MakeGenericType(memberInfo.MemberType));
             }
 
-            var body2 = Expression.Call(serializer, ReflectionInfos.IExcelSerializer_Serialize(memberInfo.MemberType), argWriterRef, memberInfo.GetMemberExpression(argValue), argOptions);
-            writeBody.Add(body2);
-
-            var bodyBlock = Expression.Block(writeBody);
+            var callSerializer = Expression.Call(serializer, ReflectionInfos.IExcelSerializer_Serialize(memberInfo.MemberType), argWriterRef, memberInfo.GetMemberExpression(argValue), argOptions);
             if (!memberInfo.MemberType.IsValueType || memberInfo.MemberType.IsNullable())
             {
                 var nullExpr = Expression.Constant(null, memberInfo.MemberType);
-                var body3 = Expression.Call(argWriterRef, ReflectionInfos.CsvWriter_Empty);
                 var ifBody = Expression.IfThenElse(
                     Expression.NotEqual(memberInfo.GetMemberExpression(argValue), nullExpr),
-                    bodyBlock,
-                    Expression.Block(body3)
+                    callSerializer,
+                    Expression.Call(argWriterRef, ReflectionInfos.CsvWriter_Empty)
                 );
                 foreachBodies.Add(ifBody);
             }
             else
             {
-                foreachBodies.Add(bodyBlock);
+                foreachBodies.Add(callSerializer);
             }
             i++;
         }

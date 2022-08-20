@@ -1,7 +1,5 @@
-﻿using System;
-using System.Buffers;
+﻿using System.Buffers;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace FakeExcelSerializer;
@@ -18,8 +16,6 @@ public class ExcelSerializerWriter : IDisposable
     const int LEN_DATETIME = 18;
     const int LEN_TIME = 8;
 
-    readonly ArrayPoolBufferWriter _writer = new();
-
     static readonly byte[] _emptyColumn = Encoding.UTF8.GetBytes("<c></c>");
     static readonly byte[] _colStartBoolean = Encoding.UTF8.GetBytes(@"<c t=""b""><v>");
     static readonly byte[] _colStartNumber = Encoding.UTF8.GetBytes(@"<c t=""n""><v>");
@@ -27,42 +23,42 @@ public class ExcelSerializerWriter : IDisposable
     static readonly byte[] _colStartString = Encoding.UTF8.GetBytes(@$"<c t=""s""><v>");
     static readonly byte[] _colEnd = Encoding.UTF8.GetBytes(@"</v></c>");
 
+    readonly ArrayPoolBufferWriter _writer = new();
     readonly ExcelSerializerOptions _options;
-    readonly bool _calcMaxLength;
 
-    int _rowIndex = 0;
+    bool _countingCharLength;
+
     int _columnIndex = 0;
     int _currentDepth = 0;
-
     int _stringIndex = 0;
 
     public ExcelSerializerWriter(ExcelSerializerOptions options)
     {
         _options = options;
         _currentDepth = 0;
-        _calcMaxLength = options.AutoFitColumns;
+        _countingCharLength = options.AutoFitColumns;
     }
-
-    /// <summary>
-    /// 文字列の辞書を管理。同じ値は同じIDで出力するため
-    /// </summary>
-    public Dictionary<string, int> SharedStrings { get; } = new();
-
-    /// <summary>
-    /// 列ごとの最大文字数を集計する。列幅自動調整用
-    /// </summary>
-    public Dictionary<int, int> ColumnMaxLength { get; } = new();
 
     public void Dispose()
     {
         _writer.Dispose();
+        GC.SuppressFinalize(this);
     }
 
-    public void Reset()
-    {
-        _rowIndex = 0;
-        Clear();
-    }
+    /// <summary>
+    /// Maintain a dictionary of strings. Output the same value with the same ID.
+    /// </summary>
+    public Dictionary<string, int> SharedStrings { get; } = new();
+    public ReadOnlySpan<byte> AsSpan() => _writer.GetSpan();
+    public ReadOnlyMemory<byte> AsMemory() => _writer.GetMemory();
+    public long BytesCommitted() => _writer.BytesCommitted;
+    public override string ToString() => Encoding.UTF8.GetString(_writer.GetSpan());
+
+    /// <summary>
+    /// Tally the maximum number of characters per column. For automatic column width adjustment
+    /// </summary>
+    public Dictionary<int, int> ColumnMaxLength { get; } = new();
+    public void StopCountingCharLength() => _countingCharLength = false;
 
     void Clear()
     {
@@ -71,11 +67,6 @@ public class ExcelSerializerWriter : IDisposable
         _writer.Clear();
     }
 
-    public ReadOnlySpan<byte> AsSpan() => _writer.GetSpan();
-    public ReadOnlyMemory<byte> AsMemory() => _writer.GetMemory();
-    public long BytesCommitted() => _writer.BytesCommitted;
-    public override string ToString() => Encoding.UTF8.GetString(_writer.GetSpan());
-
     /// <summary>Writes a value to the Stream</summary>
     /// <remarks>Perform one line at a time.</remarks>
     public async Task CopyToAsync(Stream stream)
@@ -83,7 +74,6 @@ public class ExcelSerializerWriter : IDisposable
         if (stream == null)
             throw new ArgumentNullException(nameof(stream));
         await _writer.CopyToAsync(stream);
-        _rowIndex++;
         Clear();
     }
 
@@ -94,7 +84,6 @@ public class ExcelSerializerWriter : IDisposable
         if (stream == null)
             throw new ArgumentNullException(nameof(stream));
         _writer.CopyTo(stream);
-        _rowIndex++;
         Clear();
     }
 
@@ -104,9 +93,7 @@ public class ExcelSerializerWriter : IDisposable
         //_first = true;
         _currentDepth++;
         if (_currentDepth >= _options.MaxDepth)
-        {
             ThrowReachedMaxDepth(_currentDepth);
-        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -124,9 +111,10 @@ public class ExcelSerializerWriter : IDisposable
         return 0;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void SetMaxLength(int length)
     {
-        if (!_calcMaxLength || _rowIndex > _options.AutoFitDepth)
+        if (!_countingCharLength)
             return;
 
         if (!ColumnMaxLength.TryAdd(_columnIndex, length))
@@ -174,6 +162,15 @@ public class ExcelSerializerWriter : IDisposable
         SetMaxLength(s.Length);
     }
 
+    void WriterNumber(in ReadOnlySpan<char> chars)
+    {
+        _writer.Write(_colStartNumber);
+        _ = Encoding.UTF8.GetBytes(chars, _writer);
+        _writer.Write(_colEnd);
+
+        SetMaxLength(chars.Length);
+    }
+
     public void WritePrimitive(byte value) => WriterNumber($"{value}");
     public void WritePrimitive(sbyte value) => WriterNumber($"{value}");
     public void WritePrimitive(char value) => WriterNumber($"{value}");
@@ -186,14 +183,6 @@ public class ExcelSerializerWriter : IDisposable
     public void WritePrimitive(ulong value) => WriterNumber($"{value}");
     public void WritePrimitive(short value) => WriterNumber($"{value}");
     public void WritePrimitive(ushort value) => WriterNumber($"{value}");
-
-    void WriterNumber(in ReadOnlySpan<char> chars)
-    {
-        _writer.Write(_colStartNumber);
-        _ = Encoding.UTF8.GetBytes(chars, _writer);
-        _writer.Write(_colEnd);
-        SetMaxLength(chars.Length);
-    }
 
     public void WriteDateTime(DateTime value)
     {

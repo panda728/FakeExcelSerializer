@@ -169,7 +169,6 @@ public static class ExcelSerializer
                 writer.Write(t);
             }
             writer.WriteRaw(_rowEnd);
-
             writer.CopyTo(stream);
         }
 
@@ -195,6 +194,8 @@ public static class ExcelSerializer
         ExcelSerializerOptions options
     )
     {
+        // Counting the number of characters in Writer's internal process
+        // The result is stored in writer.ColumnMaxLength 
         var dummyStream = new MemoryStream();
         var serializer = options.GetSerializer<T>();
         foreach (var row in rows.Take(options.AutoFitDepth))
@@ -203,7 +204,6 @@ public static class ExcelSerializer
             writer.CopyTo(dummyStream);
             dummyStream.Position = 0;
         }
-        writer.Reset();
 
         using var buffer = new ArrayPoolBufferWriter();
         stream.Write(_colStart);
@@ -221,6 +221,7 @@ public static class ExcelSerializer
             buffer.Clear();
         }
         stream.Write(_colEnd);
+        writer.StopCountingCharLength();
     }
 
     static void WriteSharedStrings(Stream stream, ExcelSerializerWriter writer)

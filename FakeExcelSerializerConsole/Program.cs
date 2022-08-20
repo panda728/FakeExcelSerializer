@@ -61,11 +61,13 @@ var newConfig = ExcelSerializerOptions.Default with
         new[] { new BoolZeroOneSerializer() },
         new[] { ExcelSerializerProvider.Default }),
     HasHeaderRecord = true,
-    HeaderTitles = new string[] { "Id", "名", "姓", "氏名", "ユーザー名", "Email", "ユニークキー", "Guid", "Flag", "プロフィール画像", "カートGuid", "TEL", "UnixTime", "作成日時", "日付", "時刻", "TimeSpan", "DateTimeOffset", "Fallback", "Uri", "性別", "オーダー番号1", "アイテム1", "数量1", "ロット1", "オーダー番号2", "アイテム2", "数量2", "ロット2", "オーダー番号3", "アイテム3", "数量3", "ロット3", "数値" },
+    HeaderTitles = new string[] { "Id", "FName", "LName", "Name", "UserID", "Email", "Key", "Guid", "Flag", "Profile", "CartGuid", "TEL", "UnixTime", "Create Time", "Date", "Time", "TimeSpan", "DateTimeOffset", "Fallback", "Uri", "Gender", "OrderNumber1", "Item1", "Qty1", "Lot1", "OrderNumber2", "Item2", "Qty", "Lot2", "OrderNumber3", "Item3", "Qty3", "Lot3", "Value" },
     AutoFitColumns = true,
 };
 
 var fileName = Path.Combine(Environment.CurrentDirectory, "test.xlsx");
+if (File.Exists(fileName))
+    File.Delete(fileName);
 ExcelSerializer.ToFile(Users, fileName, newConfig);
 
 sw.Stop();

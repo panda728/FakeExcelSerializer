@@ -8,7 +8,6 @@ public sealed class GenericsExcelSerializerProvider : IExcelSerializerProvider
 
     GenericsExcelSerializerProvider()
     {
-
     }
 
     public IExcelSerializer<T>? GetSerializer<T>()
