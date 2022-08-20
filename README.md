@@ -19,7 +19,7 @@ ExcelSerializer.ToFile(Users, "test.xlsx", ExcelSerializerOptions.Default);
 
 Folder creation permissions are required since a working folder will be used.
 
-## Expamples
+## Examples
 
 If you pass an object, it will be converted to an Excel file.
 ~~~
