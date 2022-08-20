@@ -196,23 +196,27 @@ public static class ExcelSerializer
     {
         // Counting the number of characters in Writer's internal process
         // The result is stored in writer.ColumnMaxLength 
-        var dummyStream = new MemoryStream();
         var serializer = options.GetSerializer<T>();
+
+        if (options.HasHeaderRecord && options.HeaderTitles != null)
+        {
+            foreach (var t in options.HeaderTitles)
+                writer.Write(t);
+            writer.Clear();
+        }
         foreach (var row in rows.Take(options.AutoFitDepth))
         {
             serializer?.Serialize(ref writer, row, options);
-            writer.CopyTo(dummyStream);
-            dummyStream.Position = 0;
+            writer.Clear();
         }
+        writer.StopCountingCharLength();
 
         using var buffer = new ArrayPoolBufferWriter();
         stream.Write(_colStart);
         foreach (var pair in writer.ColumnMaxLength)
         {
             var id = pair.Key + 1;
-            var charLength = options.HeaderTitles == null || options.HeaderTitles.Length <= pair.Key
-                ? pair.Value : Math.Max(pair.Value, options.HeaderTitles[pair.Key].Length);
-            var width = Math.Min(options.AutoFitWidhtMax, charLength + COLUMN_WIDTH_MARGIN);
+            var width = Math.Min(options.AutoFitWidhtMax, pair.Value + COLUMN_WIDTH_MARGIN);
 
             Encoding.UTF8.GetBytes(
                 @$"<col min=""{id}"" max =""{id}"" width =""{width:0.0}"" bestFit =""1"" customWidth =""1"" />",
@@ -221,7 +225,6 @@ public static class ExcelSerializer
             buffer.Clear();
         }
         stream.Write(_colEnd);
-        writer.StopCountingCharLength();
     }
 
     static void WriteSharedStrings(Stream stream, ExcelSerializerWriter writer)

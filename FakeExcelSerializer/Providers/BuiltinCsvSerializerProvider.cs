@@ -5,7 +5,7 @@ namespace FakeExcelSerializer.Providers;
 public sealed class BuiltinExcelSerializerProvider : IExcelSerializerProvider
 {
     public static IExcelSerializerProvider Instance { get; } = new BuiltinExcelSerializerProvider();
-    readonly Dictionary<Type, IExcelSerializer> serializers = new Dictionary<Type, IExcelSerializer>()
+    readonly Dictionary<Type, IExcelSerializer> serializers = new()
         {
             { typeof(string), new BuiltinSerializers.StringExcelSerializer() },
             { typeof(Guid), new  BuiltinSerializers.GuidExcelSerializer() },

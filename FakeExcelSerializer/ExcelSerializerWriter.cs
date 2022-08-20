@@ -60,7 +60,7 @@ public class ExcelSerializerWriter : IDisposable
     public Dictionary<int, int> ColumnMaxLength { get; } = new();
     public void StopCountingCharLength() => _countingCharLength = false;
 
-    void Clear()
+    public void Clear()
     {
         _columnIndex = 0;
         _currentDepth = 0;
@@ -136,7 +136,7 @@ public class ExcelSerializerWriter : IDisposable
         }
 
         _writer.Write(
-            value?.Contains(Environment.NewLine) ?? false
+            value.Contains(Environment.NewLine)
                 ? _colStartStringWrap
                 : _colStartString
         );
