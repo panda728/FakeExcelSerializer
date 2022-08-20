@@ -44,6 +44,8 @@ var potals = new Portal[] {
 
 ExcelSerializer.ToFile(potals, @"c:\test\potals.xlsx", ExcelSerializerOptions.Default);
 ~~~
+![image](https://user-images.githubusercontent.com/16958552/185727657-3e41dea7-1af4-4a52-99bd-1457f895b564.png)
+
 
 Options can be set to display a title line and automatically adjust column widths.
 ~~~
