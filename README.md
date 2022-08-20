@@ -49,7 +49,6 @@ ExcelSerializer.ToFile(potals, @"c:\test\potals.xlsx", ExcelSerializerOptions.De
 
 Options can be set to display a title line and automatically adjust column widths.
 ~~~
-
 var newConfig = ExcelSerializerOptions.Default with
 {
     CultureInfo = CultureInfo.InvariantCulture,
@@ -58,8 +57,8 @@ var newConfig = ExcelSerializerOptions.Default with
     AutoFitColumns = true,
 };
 ExcelSerializer.ToFile(potals, @"c:\test\potalsOp.xlsx", newConfig);
-
 ~~~
+![image](https://user-images.githubusercontent.com/16958552/185727708-18201283-bb0b-46ba-a413-dbe34c20f3a3.png)
 
 
 ## Note
