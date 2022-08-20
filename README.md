@@ -25,6 +25,7 @@ If you pass an object, it will be converted to an Excel file.
 ~~~
 ExcelSerializer.ToFile(new string[] { "test", "test2" }, @"c:\test\test.xlsx", ExcelSerializerOptions.Default);
 ~~~
+![image](https://user-images.githubusercontent.com/16958552/185727609-79b574e8-b40c-46dc-83c9-74b078a1f44a.png)
 
 Passing a class expands the property into a column.
 ~~~
