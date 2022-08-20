@@ -19,6 +19,46 @@ ExcelSerializer.ToFile(Users, "test.xlsx", ExcelSerializerOptions.Default);
 
 Folder creation permissions are required since a working folder will be used.
 
+## Expamples
+
+If you pass an object, it will be converted to an Excel file.
+~~~
+ExcelSerializer.ToFile(new string[] { "test", "test2" }, @"c:\test\test.xlsx", ExcelSerializerOptions.Default);
+~~~
+
+Passing a class expands the property into a column.
+~~~
+public class Portal
+{
+    public string Name { get; set; }
+    public string Owner { get; set; }
+    public int Level { get; set; }
+}
+
+var potals = new Portal[] {
+    new Portal { Name = "Portal1", Owner = "panda728", Level = 8 },
+    new Portal { Name = "Portal2", Owner = "panda728", Level = 1 },
+    new Portal { Name = "Portal3", Owner = "panda728", Level = 2 },
+};
+
+ExcelSerializer.ToFile(potals, @"c:\test\potals.xlsx", ExcelSerializerOptions.Default);
+~~~
+
+Options can be set to display a title line and automatically adjust column widths.
+~~~
+
+var newConfig = ExcelSerializerOptions.Default with
+{
+    CultureInfo = CultureInfo.InvariantCulture,
+    HasHeaderRecord = true,
+    HeaderTitles = new string[] { "Name", "Owner", "Level" },
+    AutoFitColumns = true,
+};
+ExcelSerializer.ToFile(potals, @"c:\test\potalsOp.xlsx", newConfig);
+
+~~~
+
+
 ## Note
 
 For the method of retrieving values from IEnumerable\<T\>, Cysharp's WebSerializer method is used.
