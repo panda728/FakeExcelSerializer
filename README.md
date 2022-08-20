@@ -9,7 +9,7 @@ PM> Install-Package FakeExcelSerializer
 ~~~
 
 ### Usage
-You can use `FakeExcelSerializer.ToFile`.
+You can use `ExcelSerializer.ToFile`.
 
 ~~~
 ExcelSerializer.ToFile(Users, "test.xlsx", ExcelSerializerOptions.Default);
