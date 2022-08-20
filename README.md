@@ -15,6 +15,10 @@ You can use `ExcelSerializer.ToFile`.
 ExcelSerializer.ToFile(Users, "test.xlsx", ExcelSerializerOptions.Default);
 ~~~
 
+## Notice
+
+Folder creation permissions are required since a working folder will be used.
+
 ## Note
 
 For the method of retrieving values from IEnumerable\<T\>, Cysharp's WebSerializer method is used.
