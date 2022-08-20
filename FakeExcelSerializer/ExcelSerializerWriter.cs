@@ -104,6 +104,7 @@ public class ExcelSerializerWriter : IDisposable
 
     public void WriteRaw(ReadOnlySpan<byte> value) => _writer.Write(value);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int WriteEmpty()
     {
         _columnIndex++;
@@ -162,6 +163,7 @@ public class ExcelSerializerWriter : IDisposable
         SetMaxLength(s.Length);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void WriterNumber(in ReadOnlySpan<char> chars)
     {
         _writer.Write(_colStartNumber);

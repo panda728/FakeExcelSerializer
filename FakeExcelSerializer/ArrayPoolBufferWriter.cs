@@ -1,4 +1,5 @@
 ﻿using System.Buffers;
+using System.Runtime.CompilerServices;
 
 namespace FakeExcelSerializer;
 
@@ -129,6 +130,7 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         _written = 0;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void CheckIfDisposed()
     {
         if (_rentedBuffer == null)

@@ -58,7 +58,7 @@ internal sealed class CompiledObjectGraphExcelSerializer<T> : IExcelSerializer<T
         // SerializeMethod(ref ExcelSerializerWriter writer, IExcelSerializer[]? alternateSerializers, T value, ExcelSerializerOptions options)
         // foreach(members)
         //   if (value.Foo != null) // reference type || nullable type
-        //     options.GetRequiredSerializer<T>() || ((ICsvSerialzier<T>)alternateSerializers[0] .Serialize(writer, value.Foo, options)
+        //     options.GetRequiredSerializer<T>() || ((IExcelSerialzier<T>)alternateSerializers[0] .Serialize(writer, value.Foo, options)
         //   else
         //     writer.WriteEmpty();
 
@@ -71,19 +71,21 @@ internal sealed class CompiledObjectGraphExcelSerializer<T> : IExcelSerializer<T
         var i = 0;
         foreach (var memberInfo in memberInfos)
         {
-            Expression serializer;
-            if (memberInfo.ExcelSerializer == null)
-            {
-                serializer = Expression.Call(argOptions, ReflectionInfos.ExcelSerializerOptions_GetRequiredSerializer(memberInfo.MemberType));
-            }
-            else
-            {
-                serializer = Expression.Convert(
+            Expression serializer = memberInfo.ExcelSerializer == null
+                ? Expression.Call(argOptions, ReflectionInfos.ExcelSerializerOptions_GetRequiredSerializer(memberInfo.MemberType))
+                : Expression.Convert(
                     Expression.ArrayIndex(argAlternateSerializers, Expression.Constant(i, typeof(int))),
-                    typeof(IExcelSerializer<>).MakeGenericType(memberInfo.MemberType));
-            }
+                    typeof(IExcelSerializer<>).MakeGenericType(memberInfo.MemberType)
+                );
 
-            var callSerializer = Expression.Call(serializer, ReflectionInfos.IExcelSerializer_Serialize(memberInfo.MemberType), argWriterRef, memberInfo.GetMemberExpression(argValue), argOptions);
+            var callSerializer = Expression.Call(
+                serializer,
+                ReflectionInfos.IExcelSerializer_Serialize(memberInfo.MemberType),
+                argWriterRef,
+                memberInfo.GetMemberExpression(argValue),
+                argOptions
+            );
+
             if (!memberInfo.MemberType.IsValueType || memberInfo.MemberType.IsNullable())
             {
                 var nullExpr = Expression.Constant(null, memberInfo.MemberType);
