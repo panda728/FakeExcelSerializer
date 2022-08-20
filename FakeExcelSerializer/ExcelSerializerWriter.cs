@@ -151,7 +151,8 @@ public class ExcelSerializerWriter : IDisposable
 
         SetMaxLength(value.Length);
     }
-
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(bool value)
     {
         var s = $"{value}";
