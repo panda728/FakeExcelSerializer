@@ -28,14 +28,6 @@ namespace FakeExcelSerializer.Serializers
         }
     }
 
-    public sealed class CharExcelSerializer : IExcelSerializer<Char>
-    {
-        public void Serialize(ref ExcelSerializerWriter writer, Char value, ExcelSerializerOptions options)
-        {
-            writer.WritePrimitive(value);
-        }
-    }
-
     public sealed class DecimalExcelSerializer : IExcelSerializer<Decimal>
     {
         public void Serialize(ref ExcelSerializerWriter writer, Decimal value, ExcelSerializerOptions options)
@@ -119,7 +111,6 @@ namespace FakeExcelSerializer.Providers
             serializers[typeof(System.Boolean)] = new FakeExcelSerializer.Serializers.BooleanExcelSerializer();
             serializers[typeof(System.Byte)] = new FakeExcelSerializer.Serializers.ByteExcelSerializer();
             serializers[typeof(System.SByte)] = new FakeExcelSerializer.Serializers.SByteExcelSerializer();
-            serializers[typeof(System.Char)] = new FakeExcelSerializer.Serializers.CharExcelSerializer();
             serializers[typeof(System.Decimal)] = new FakeExcelSerializer.Serializers.DecimalExcelSerializer();
             serializers[typeof(System.Double)] = new FakeExcelSerializer.Serializers.DoubleExcelSerializer();
             serializers[typeof(System.Single)] = new FakeExcelSerializer.Serializers.SingleExcelSerializer();

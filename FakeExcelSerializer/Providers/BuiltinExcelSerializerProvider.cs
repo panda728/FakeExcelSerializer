@@ -8,6 +8,7 @@ public sealed class BuiltinExcelSerializerProvider : IExcelSerializerProvider
     readonly Dictionary<Type, IExcelSerializer> serializers = new()
         {
             { typeof(string), new BuiltinSerializers.StringExcelSerializer() },
+            { typeof(char), new BuiltinSerializers.CharExcelSerializer() },
             { typeof(Guid), new  BuiltinSerializers.GuidExcelSerializer() },
             { typeof(Enum), new  BuiltinSerializers.EnumExcelSerializer() },
             { typeof(DateTime), new  BuiltinSerializers.DateTimeExcelSerializer() },

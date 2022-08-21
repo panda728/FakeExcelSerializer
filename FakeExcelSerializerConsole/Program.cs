@@ -42,6 +42,7 @@ var testUsers = new Faker<User>()
     .RuleFor(u => u.FullName, (f, u) => u.FirstName + " " + u.LastName)
     .RuleFor(u => u.Orders, f => testOrders.Generate(3).ToList())
     .RuleFor(o => o.Value, f => f.Random.Double(0, 1000))
+    .RuleFor(o => o.Char, f => (char)f.Random.Int(65, 65 + 26))
     .FinishWith((f, u) =>
     {
         //Console.WriteLine("User Created! Id={0}", u.Id);
@@ -141,5 +142,6 @@ public class User
 
     public List<Order> Orders { get; set; }
     public double Value { get; set; }
+    public char Char { get; set; }
 }
 #pragma warning restore CS8618 // null 非許容のフィールドには、コンストラクターの終了時に null 以外の値が入っていなければなりません。Null 許容として宣言することをご検討ください。

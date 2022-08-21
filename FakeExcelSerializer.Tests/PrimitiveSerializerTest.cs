@@ -1,50 +1,34 @@
 using FluentAssertions;
-using System.Diagnostics;
-using System.Text;
 
 namespace FakeExcelSerializer.Tests
 {
-    public class StandardTest
+    public partial class PrimitiveSerializerTest
     {
-        [Fact]
-        public void Serializer_string()
+        internal void RunNumberTest<T>(IExcelSerializer<T> serializer, T value1, T value2, ExcelSerializerOptions option)
         {
-            var options = ExcelSerializerOptions.Default;
-            var serializer = options.GetSerializer<string>();
-            Assert.NotNull(serializer);
-            if (serializer == null) return;
-
-            var writer = new ExcelSerializerWriter(options);
-            serializer.Serialize(ref writer, "column1", options);
-            serializer.Serialize(ref writer, "column2", options);
-            serializer.Serialize(ref writer, "column1", options);
-
-            Assert.Equal(2, writer.SharedStrings.Count);
-
-            var columnXml = writer.ToString();
-            var sharedString1 = writer.SharedStrings.First().Key;
-            var sharedString2 = writer.SharedStrings.Skip(1).First().Key;
+            var writer = new ExcelSerializerWriter(option);
+            serializer.Serialize(ref writer, value1, option);
+            serializer.Serialize(ref writer, value2, option);
+            Assert.Empty(writer.SharedStrings);
+            writer.ToString().Should().Be($"<c t=\"n\"><v>{value1}</v></c><c t=\"n\"><v>{value2}</v></c>");
             writer.Dispose();
-
-            columnXml.Should().Be("<c t=\"s\"><v>0</v></c><c t=\"s\"><v>1</v></c><c t=\"s\"><v>0</v></c>");
-            sharedString1.Should().Be("column1");
-            sharedString2.Should().Be("column2");
         }
 
         [Fact]
-        public void Serializer_int()
+        public void Serializer_Boolean()
         {
-            var options = ExcelSerializerOptions.Default;
-            var serializer = options.GetSerializer<int>();
+            var option = ExcelSerializerOptions.Default;
+            var serializer = option.GetSerializer<Boolean>();
             Assert.NotNull(serializer);
             if (serializer == null) return;
+            var value1 = true;
+            var value2 = false;
 
-            var writer = new ExcelSerializerWriter(options);
-            serializer.Serialize(ref writer, 100, options);
-
+            var writer = new ExcelSerializerWriter(option);
+            serializer.Serialize(ref writer, value1, option);
+            serializer.Serialize(ref writer, value2, option);
             Assert.Empty(writer.SharedStrings);
-
-            writer.ToString().Should().Be("<c t=\"n\"><v>100</v></c>");
+            writer.ToString().Should().Be($"<c t=\"b\"><v>True</v></c><c t=\"b\"><v>False</v></c>");
             writer.Dispose();
         }
     }

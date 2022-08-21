@@ -11,6 +11,12 @@ internal class BuiltinSerializers
             => writer.Write(value);
     }
 
+    public sealed class CharExcelSerializer : IExcelSerializer<char>
+    {
+        public void Serialize(ref ExcelSerializerWriter writer, char value, ExcelSerializerOptions options)
+            => writer.Write(value);
+    }
+
     public sealed class GuidExcelSerializer : IExcelSerializer<Guid>
     {
         public void Serialize(ref ExcelSerializerWriter writer, Guid value, ExcelSerializerOptions options)

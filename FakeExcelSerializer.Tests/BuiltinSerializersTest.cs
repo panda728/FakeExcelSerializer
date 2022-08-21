@@ -76,6 +76,18 @@ namespace FakeExcelSerializer.Tests
         }
 
         [Fact]
+        public void Serializer_char()
+        {
+            var option = ExcelSerializerOptions.Default;
+            var serializer = option.GetSerializer<char>();
+            Assert.NotNull(serializer);
+            if (serializer == null) return;
+
+            RunStringColumnTest(ref serializer, 'A','Z',
+                "A", "Z", option);
+        }
+
+        [Fact]
         public void Serializer_Guid()
         {
             var option = ExcelSerializerOptions.Default;

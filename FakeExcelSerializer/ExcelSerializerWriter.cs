@@ -151,7 +151,9 @@ public class ExcelSerializerWriter : IDisposable
 
         SetMaxLength(value.Length);
     }
-    
+
+    public void Write(char value) => Write($"{value}");
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(bool value)
     {
@@ -176,7 +178,6 @@ public class ExcelSerializerWriter : IDisposable
 
     public void WritePrimitive(byte value) => WriterNumber($"{value}");
     public void WritePrimitive(sbyte value) => WriterNumber($"{value}");
-    public void WritePrimitive(char value) => WriterNumber($"{value}");
     public void WritePrimitive(decimal value) => WriterNumber($"{value}");
     public void WritePrimitive(double value) => WriterNumber($"{value}");
     public void WritePrimitive(float value) => WriterNumber($"{value}");
