@@ -30,5 +30,22 @@ namespace FakeExcelSerializer.Tests
             sharedString1.Should().Be("column1");
             sharedString2.Should().Be("column2");
         }
+
+        [Fact]
+        public void Serializer_int()
+        {
+            var options = ExcelSerializerOptions.Default;
+            var serializer = options.GetSerializer<int>();
+            Assert.NotNull(serializer);
+            if (serializer == null) return;
+
+            var writer = new ExcelSerializerWriter(options);
+            serializer.Serialize(ref writer, 100, options);
+
+            Assert.Empty(writer.SharedStrings);
+
+            writer.ToString().Should().Be("<c t=\"n\"><v>100</v></c>");
+            writer.Dispose();
+        }
     }
 }
