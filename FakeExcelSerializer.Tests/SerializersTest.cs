@@ -137,7 +137,7 @@ namespace FakeExcelSerializer.Tests
 
         public class Portal
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = "";
             public string? Owner { get; set; }
             public int Level { get; set; }
         }
