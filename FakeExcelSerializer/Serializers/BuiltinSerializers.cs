@@ -1,13 +1,16 @@
-﻿using System.Buffers;
-using System.Text;
-
-namespace FakeExcelSerializer.Serializers;
+﻿namespace FakeExcelSerializer.Serializers;
 
 internal class BuiltinSerializers
 {
     public sealed class StringExcelSerializer : IExcelSerializer<string?>
     {
         public void Serialize(ref ExcelSerializerWriter writer, string? value, ExcelSerializerOptions options)
+            => writer.Write(value);
+    }
+
+    public sealed class CharExcelSerializer : IExcelSerializer<char>
+    {
+        public void Serialize(ref ExcelSerializerWriter writer, char value, ExcelSerializerOptions options)
             => writer.Write(value);
     }
 

@@ -5,11 +5,11 @@ namespace FakeExcelSerializer;
 
 public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
 {
-    private byte[]? _rentedBuffer;
-    private int _written;
-    private long _committed;
+    byte[]? _rentedBuffer;
+    int _written;
+    long _committed;
 
-    private const int MinimumBufferSize = 256;
+    const int MinimumBufferSize = 256;
 
     public ArrayPoolBufferWriter(int initialCapacity = MinimumBufferSize)
     {
@@ -61,6 +61,7 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear()
     {
         CheckIfDisposed();
@@ -68,7 +69,8 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         ClearHelper();
     }
 
-    private void ClearHelper()
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    void ClearHelper()
     {
         _rentedBuffer.AsSpan(0, _written).Clear();
         _written = 0;
@@ -131,7 +133,7 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void CheckIfDisposed()
+    void CheckIfDisposed()
     {
         if (_rentedBuffer == null)
             throw new ObjectDisposedException(nameof(ArrayPoolBufferWriter));
@@ -159,7 +161,7 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         return _rentedBuffer.AsSpan(_written);
     }
 
-    private void CheckAndResizeBuffer(int sizeHint)
+    void CheckAndResizeBuffer(int sizeHint)
     {
         if (_rentedBuffer == null)
         {
