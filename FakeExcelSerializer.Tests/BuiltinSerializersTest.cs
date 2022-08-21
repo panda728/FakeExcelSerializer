@@ -24,7 +24,6 @@ namespace FakeExcelSerializer.Tests
                 var columnXml = writer.ToString();
                 var sharedString1 = writer.SharedStrings.First().Key;
                 var sharedString2 = writer.SharedStrings.Skip(1).First().Key;
-                writer.Dispose();
 
                 columnXml.Should().Be("<c t=\"s\"><v>0</v></c><c t=\"s\"><v>1</v></c><c t=\"s\"><v>0</v></c>");
                 sharedString1.Should().Be(value1ShouldBe);
@@ -55,7 +54,6 @@ namespace FakeExcelSerializer.Tests
                 Assert.Empty(writer.SharedStrings);
 
                 writer.ToString().Should().Be(value1ShouldBe);
-                writer.Dispose();
             }
             catch
             {
