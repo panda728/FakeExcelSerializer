@@ -34,13 +34,9 @@ namespace FakeExcelSerializer.Tests
         [Fact]
         public void Serializer_<#= type.Name #>()
         {
-            var option = ExcelSerializerOptions.Default;
-            var serializer = option.GetSerializer<<#= type.Name #>>();
-            Assert.NotNull(serializer);
-            if (serializer == null) return;
             var value1 = <#= type.Name #>.MinValue;
             var value2 = <#= type.Name #>.MaxValue;
-            RunNumberTest(serializer, value1, value2, option);
+            RunNumberTest(value1, value2, ExcelSerializerOptions.Default);
         }
 <# } #>
     }

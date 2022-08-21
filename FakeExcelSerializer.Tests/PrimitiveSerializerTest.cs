@@ -4,8 +4,11 @@ namespace FakeExcelSerializer.Tests
 {
     public partial class PrimitiveSerializerTest
     {
-        internal void RunNumberTest<T>(IExcelSerializer<T> serializer, T value1, T value2, ExcelSerializerOptions option)
+        internal void RunNumberTest<T>(T value1, T value2, ExcelSerializerOptions option)
         {
+            var serializer = option.GetSerializer<T>();
+            Assert.NotNull(serializer);
+            if (serializer == null) return;
             var writer = new ExcelSerializerWriter(option);
             serializer.Serialize(ref writer, value1, option);
             serializer.Serialize(ref writer, value2, option);

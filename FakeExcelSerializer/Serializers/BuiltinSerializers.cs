@@ -1,7 +1,4 @@
-﻿using System.Buffers;
-using System.Text;
-
-namespace FakeExcelSerializer.Serializers;
+﻿namespace FakeExcelSerializer.Serializers;
 
 internal class BuiltinSerializers
 {

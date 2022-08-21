@@ -5,11 +5,13 @@ namespace FakeExcelSerializer.Tests
     public class BuiltinSerializersTest
     {
         void RunStringColumnTest<T>(
-            ref IExcelSerializer<T> serializer,
             T value1, T value2,
             string value1ShouldBe, string value2ShouldBe,
             ExcelSerializerOptions option)
         {
+            var serializer = option.GetSerializer<T>();
+            Assert.NotNull(serializer);
+            if (serializer == null) return;
             var writer = new ExcelSerializerWriter(option);
             try
             {
@@ -39,10 +41,12 @@ namespace FakeExcelSerializer.Tests
         }
 
         void RunColumnTest<T>(
-            ref IExcelSerializer<T> serializer,
             T value1, string value1ShouldBe,
             ExcelSerializerOptions option)
         {
+            var serializer = option.GetSerializer<T>();
+            Assert.NotNull(serializer);
+            if (serializer == null) return;
             var writer = new ExcelSerializerWriter(option);
             try
             {
@@ -66,40 +70,31 @@ namespace FakeExcelSerializer.Tests
         [Fact]
         public void Serializer_string()
         {
-            var option = ExcelSerializerOptions.Default;
-            var serializer = option.GetSerializer<string>();
-            Assert.NotNull(serializer);
-            if (serializer == null) return;
-
-            RunStringColumnTest(ref serializer, "column1", "column2",
-                "column1", "column2", option);
+            RunStringColumnTest(
+                "column1", "column2",
+                "column1", "column2",
+                ExcelSerializerOptions.Default);
         }
 
         [Fact]
         public void Serializer_char()
         {
-            var option = ExcelSerializerOptions.Default;
-            var serializer = option.GetSerializer<char>();
-            Assert.NotNull(serializer);
-            if (serializer == null) return;
-
-            RunStringColumnTest(ref serializer, 'A','Z',
-                "A", "Z", option);
+            RunStringColumnTest(
+                'A', 'Z',
+                "A", "Z",
+                ExcelSerializerOptions.Default);
         }
 
         [Fact]
         public void Serializer_Guid()
         {
-            var option = ExcelSerializerOptions.Default;
-            var serializer = option.GetSerializer<Guid>();
-            Assert.NotNull(serializer);
-            if (serializer == null) return;
-
             var guid1 = Guid.NewGuid();
             var guid2 = Guid.NewGuid();
 
-            RunStringColumnTest(ref serializer, guid1, guid2,
-                guid1.ToString(), guid2.ToString(), option);
+            RunStringColumnTest(
+                guid1, guid2,
+                guid1.ToString(), guid2.ToString(),
+                ExcelSerializerOptions.Default);
         }
 
         enum DayOfWeek
@@ -110,93 +105,71 @@ namespace FakeExcelSerializer.Tests
         [Fact]
         public void Serializer_Enum()
         {
-            var option = ExcelSerializerOptions.Default;
-            var serializer = option.GetSerializer<Enum>();
-            Assert.NotNull(serializer);
-            if (serializer == null) return;
-
-            RunStringColumnTest(ref serializer, DayOfWeek.Mon, DayOfWeek.Tue,
-                DayOfWeek.Mon.ToString(), DayOfWeek.Tue.ToString(), option);
+            RunStringColumnTest(
+                DayOfWeek.Mon, DayOfWeek.Tue,
+                DayOfWeek.Mon.ToString(), DayOfWeek.Tue.ToString(),
+                ExcelSerializerOptions.Default);
         }
 
         [Fact]
         public void Serializer_DateTime()
         {
-            var option = ExcelSerializerOptions.Default;
-            var serializer = option.GetSerializer<DateTime>();
-            Assert.NotNull(serializer);
-            if (serializer == null) return;
-
             var value = new DateTime(2000, 1, 1);
-            RunColumnTest(ref serializer, value, "<c t=\"d\" s=\"3\"><v>2000-01-01T00:00:00</v></c>", option);
+            RunColumnTest(
+                value,
+                "<c t=\"d\" s=\"3\"><v>2000-01-01T00:00:00</v></c>",
+                ExcelSerializerOptions.Default);
         }
 
         [Fact]
         public void Serializer_DateTimeOffset()
         {
             var option = ExcelSerializerOptions.Default;
-            var serializer = option.GetSerializer<DateTimeOffset>();
-            Assert.NotNull(serializer);
-            if (serializer == null) return;
-
             var value1 = DateTimeOffset.Now;
             var value2 = DateTimeOffset.UtcNow;
-
-            RunStringColumnTest(ref serializer, value1, value2,
-                value1.ToString(option.CultureInfo), value2.ToString(option.CultureInfo), option);
+            RunStringColumnTest(
+                value1, value2,
+                value1.ToString(option.CultureInfo), value2.ToString(option.CultureInfo),
+                option);
         }
 
         [Fact]
         public void Serializer_TimeSpan()
         {
-            var option = ExcelSerializerOptions.Default;
-            var serializer = option.GetSerializer<TimeSpan>();
-            Assert.NotNull(serializer);
-            if (serializer == null) return;
-
             var value1 = DateTime.Today.AddHours(10) - DateTime.Today;
             var value2 = DateTime.Today.AddHours(-10) - DateTime.Today;
-            RunStringColumnTest(ref serializer, value1, value2,
-                "10:00:00", "-10:00:00", option);
+            RunStringColumnTest(
+                value1, value2,
+                "10:00:00", "-10:00:00",
+                ExcelSerializerOptions.Default);
         }
         [Fact]
         public void Serializer_Uri()
         {
-            var option = ExcelSerializerOptions.Default;
-            var serializer = option.GetSerializer<Uri>();
-            Assert.NotNull(serializer);
-            if (serializer == null) return;
-
             var value1 = new Uri("http://hoge.com/fuga");
             var value2 = new Uri("http://hoge.com/fugafuga");
-            RunStringColumnTest(ref serializer, value1, value2,
-                "http://hoge.com/fuga", "http://hoge.com/fugafuga", option);
+            RunStringColumnTest(
+                value1, value2,
+                "http://hoge.com/fuga", "http://hoge.com/fugafuga",
+                ExcelSerializerOptions.Default);
         }
         [Fact]
         public void Serializer_DateOnly()
         {
             var option = ExcelSerializerOptions.Default;
-            var serializer = option.GetSerializer<DateOnly>();
-            Assert.NotNull(serializer);
-            if (serializer == null) return;
-
             var value1 = DateOnly.FromDateTime(new DateTime(2000, 1, 1));
             var value2 = DateOnly.FromDateTime(new DateTime(9999, 12, 31));
-            RunColumnTest(ref serializer, value1, "<c t=\"d\" s=\"3\"><v>2000-01-01T00:00:00</v></c>", option);
-            RunColumnTest(ref serializer, value2, "<c t=\"d\" s=\"3\"><v>9999-12-31T00:00:00</v></c>", option);
+            RunColumnTest(value1, "<c t=\"d\" s=\"3\"><v>2000-01-01T00:00:00</v></c>", option);
+            RunColumnTest(value2, "<c t=\"d\" s=\"3\"><v>9999-12-31T00:00:00</v></c>", option);
         }
         [Fact]
         public void Serializer_TimeOnly()
         {
             var option = ExcelSerializerOptions.Default;
-            var serializer = option.GetSerializer<TimeOnly>();
-            Assert.NotNull(serializer);
-            if (serializer == null) return;
-
             var value1 = TimeOnly.FromDateTime(new DateTime(2000, 1, 1, 0, 0, 0));
             var value2 = TimeOnly.FromDateTime(new DateTime(9999, 12, 31, 23, 59, 59));
-            RunColumnTest(ref serializer, value1, "<c t=\"d\" s=\"4\"><v>1900-01-01T00:00:00</v></c>", option);
-            RunColumnTest(ref serializer, value2, "<c t=\"d\" s=\"4\"><v>1900-01-01T23:59:59</v></c>", option);
+            RunColumnTest(value1, "<c t=\"d\" s=\"4\"><v>1900-01-01T00:00:00</v></c>", option);
+            RunColumnTest(value2, "<c t=\"d\" s=\"4\"><v>1900-01-01T23:59:59</v></c>", option);
         }
     }
 }
