@@ -49,10 +49,10 @@ public class ExcelSerializerWriter : IDisposable
     /// Maintain a dictionary of strings. Output the same value with the same ID.
     /// </summary>
     public Dictionary<string, int> SharedStrings { get; } = new();
-    public ReadOnlySpan<byte> AsSpan() => _writer.GetSpan();
-    public ReadOnlyMemory<byte> AsMemory() => _writer.GetMemory();
+    public ReadOnlySpan<byte> AsSpan() => _writer.OutputAsSpan;
+    public ReadOnlyMemory<byte> AsMemory() => _writer.OutputAsMemory;
     public long BytesCommitted() => _writer.BytesCommitted;
-    public override string ToString() => Encoding.UTF8.GetString(_writer.GetSpan());
+    public override string ToString() => Encoding.UTF8.GetString(_writer.OutputAsSpan);
 
     /// <summary>
     /// Tally the maximum number of characters per column. For automatic column width adjustment
