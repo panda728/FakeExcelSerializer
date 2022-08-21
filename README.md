@@ -74,7 +74,7 @@ The following page provides information on how to return to OpenOfficeXml.
 　https://docs.microsoft.com/en-us/openspecs/office_standards/ms-xlsx/2c5dee00-eff2-4b22-92b6-0738acd4475e
 
 ## Link
-CSV-like output version
+CSV-like File output version
 　https://github.com/panda728/FakeCsvSerializer
 
 ## License
