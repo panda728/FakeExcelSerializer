@@ -18,7 +18,6 @@ namespace FakeExcelSerializer.Tests
                 Assert.Single(writer.SharedStrings);
                 var columnXml = writer.ToString();
                 var sharedString1 = writer.SharedStrings.First().Key;
-                writer.Dispose();
 
                 columnXml.Should().Be(columnXmlShouldBe);
                 sharedString1.Should().Be(value1ShouldBe);
@@ -46,7 +45,7 @@ namespace FakeExcelSerializer.Tests
                 var columnXml = writer.ToString();
                 var sharedString1 = writer.SharedStrings.First().Key;
                 var sharedString2 = writer.SharedStrings.Skip(1).First().Key;
-                writer.Dispose();
+
                 columnXml.Should().Be(columnXmlShouldBe);
                 sharedString1.Should().Be(value1ShouldBe1);
                 sharedString2.Should().Be(value1ShouldBe2);
@@ -120,7 +119,6 @@ namespace FakeExcelSerializer.Tests
                 Assert.Single(writer.SharedStrings);
                 var columnXml = writer.ToString();
                 var sharedString1 = writer.SharedStrings.First().Key;
-                writer.Dispose();
 
                 columnXml.Should().Be(columnXmlShouldBe);
                 sharedString1.Should().Be(value1ShouldBe);
@@ -137,7 +135,7 @@ namespace FakeExcelSerializer.Tests
 
         public class Portal
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = "";
             public string? Owner { get; set; }
             public int Level { get; set; }
         }
