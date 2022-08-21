@@ -24,10 +24,10 @@ public sealed class AdhocExcelSerializerProvider : IExcelSerializerProvider
     {
         foreach (var serializer in serializers)
         {
-            var webSerializerType = serializer.GetType().GetImplementedGenericType(typeof(IExcelSerializer<>));
-            if (webSerializerType != null)
+            var excelSerializerType = serializer.GetType().GetImplementedGenericType(typeof(IExcelSerializer<>));
+            if (excelSerializerType != null)
             {
-                if (webSerializerType.GenericTypeArguments[0] == type)
+                if (excelSerializerType.GenericTypeArguments[0] == type)
                 {
                     return serializer;
                 }
