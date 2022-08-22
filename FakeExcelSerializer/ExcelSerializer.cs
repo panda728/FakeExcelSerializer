@@ -229,6 +229,7 @@ public static class ExcelSerializer
         // Counting the number of characters in Writer's internal process
         // The result is stored in writer.ColumnMaxLength 
         var serializer = options.GetSerializer<T>();
+        if (serializer == null) return;
         if (options.HasHeaderRecord && options.HeaderTitles != null)
         {
             foreach (var t in options.HeaderTitles)
@@ -237,12 +238,13 @@ public static class ExcelSerializer
         }
         foreach (var row in rows.Take(options.AutoFitDepth))
         {
-            serializer?.Serialize(ref writer, row, options);
+            serializer.Serialize(ref writer, row, options);
             writer.Clear();
         }
         writer.StopCountingCharLength();
 
-        using var buffer = new ArrayPoolBufferWriter();
+        var size = 100 * writer.ColumnMaxLength.Count;
+        using var buffer = new ArrayPoolBufferWriter(size);
         buffer.Write(_colStart);
         foreach (var pair in writer.ColumnMaxLength)
         {
@@ -255,7 +257,6 @@ public static class ExcelSerializer
         }
         buffer.Write(_colEnd);
         buffer.CopyTo(stream);
-        buffer.Clear();
     }
 
     static void WriteSharedStrings(Stream stream, ExcelSerializerWriter writer)
