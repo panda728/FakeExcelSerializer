@@ -1,4 +1,6 @@
 ﻿using System.Buffers;
+using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
 using System.Text;
 
@@ -151,11 +153,11 @@ public static class ExcelSerializer
     {
         stream.Write(_sheetStart);
 
-        if (options.HasHeaderRecord && options.HeaderTitles != null && options.HeaderTitles.Any())
+        if (options.HasHeaderRecord)
             stream.Write(_frozenTitleRow);
 
         if (options.AutoFitColumns)
-            WriteCellWidth(rows, stream, writer, options);
+            WriteCellWidth(rows, ref stream, ref writer, options);
 
         stream.Write(_dataStart);
 
@@ -163,39 +165,70 @@ public static class ExcelSerializer
         {
             writer.WriteRaw(_rowStart);
             foreach (var t in options.HeaderTitles)
-            {
                 writer.Write(t);
-            }
             writer.WriteRaw(_rowEnd);
             writer.CopyTo(stream);
         }
 
         var serializer = options.GetSerializer<T>();
-        foreach (var row in rows)
+        if (serializer != null)
         {
-            if (row == null) continue;
-            writer.WriteRaw(_rowStart);
-            serializer?.Serialize(ref writer, row, options);
-            writer.WriteRaw(_rowEnd);
-            writer.CopyTo(stream);
+            if (rows is T[] arr)
+                WriteRowsSpan(arr.AsSpan(), ref stream, ref writer, serializer, options);
+            else if (rows is List<T> list)
+                WriteRowsSpan(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(list), ref stream, ref writer, serializer, options);
+            else
+                WriteRows(rows, ref stream, ref writer, serializer, options);
         }
-
         writer.WriteRaw(_dataEnd);
         writer.WriteRaw(_sheetEnd);
         writer.CopyTo(stream);
     }
 
+    static void WriteRowsSpan<T>(
+        Span<T> rows,
+        ref Stream stream,
+        ref ExcelSerializerWriter writer,
+        IExcelSerializer<T> serializer,
+        ExcelSerializerOptions options
+    )
+    {
+        foreach (var row in rows)
+        {
+            writer.WriteRaw(_rowStart);
+            serializer.Serialize(ref writer, row, options);
+            writer.WriteRaw(_rowEnd);
+            writer.CopyTo(stream);
+        }
+    }
+
+    static void WriteRows<T>(
+        IEnumerable<T> rows,
+        ref Stream stream,
+        ref ExcelSerializerWriter writer,
+        IExcelSerializer<T> serializer,
+        ExcelSerializerOptions options
+    )
+    {
+        foreach (var row in rows)
+        {
+            writer.WriteRaw(_rowStart);
+            serializer.Serialize(ref writer, row, options);
+            writer.WriteRaw(_rowEnd);
+            writer.CopyTo(stream);
+        }
+    }
+
     static void WriteCellWidth<T>(
         IEnumerable<T> rows,
-        Stream stream,
-        ExcelSerializerWriter writer,
+        ref Stream stream,
+        ref ExcelSerializerWriter writer,
         ExcelSerializerOptions options
     )
     {
         // Counting the number of characters in Writer's internal process
         // The result is stored in writer.ColumnMaxLength 
         var serializer = options.GetSerializer<T>();
-
         if (options.HasHeaderRecord && options.HeaderTitles != null)
         {
             foreach (var t in options.HeaderTitles)
@@ -210,7 +243,7 @@ public static class ExcelSerializer
         writer.StopCountingCharLength();
 
         using var buffer = new ArrayPoolBufferWriter();
-        stream.Write(_colStart);
+        buffer.Write(_colStart);
         foreach (var pair in writer.ColumnMaxLength)
         {
             var id = pair.Key + 1;
@@ -219,10 +252,10 @@ public static class ExcelSerializer
             Encoding.UTF8.GetBytes(
                 @$"<col min=""{id}"" max =""{id}"" width =""{width:0.0}"" bestFit =""1"" customWidth =""1"" />",
                 buffer);
-            buffer.CopyTo(stream);
-            buffer.Clear();
         }
-        stream.Write(_colEnd);
+        buffer.Write(_colEnd);
+        buffer.CopyTo(stream);
+        buffer.Clear();
     }
 
     static void WriteSharedStrings(Stream stream, ExcelSerializerWriter writer)
