@@ -1,4 +1,6 @@
 ﻿using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace FakeExcelSerializer;
@@ -14,7 +16,7 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
     public ArrayPoolBufferWriter(int initialCapacity = MinimumBufferSize)
     {
         if (initialCapacity <= 0)
-            throw new ArgumentException(nameof(initialCapacity));
+            throw new ArgumentException(null, nameof(initialCapacity));
 
         _rentedBuffer = ArrayPool<byte>.Shared.Rent(initialCapacity);
         _written = 0;
@@ -26,7 +28,6 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         get
         {
             CheckIfDisposed();
-
             return _rentedBuffer.AsMemory(0, _written);
         }
     }
@@ -36,7 +37,6 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         get
         {
             CheckIfDisposed();
-
             return _rentedBuffer.AsSpan(0, _written);
         }
     }
@@ -46,7 +46,6 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         get
         {
             CheckIfDisposed();
-
             return _written;
         }
     }
@@ -56,7 +55,6 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         get
         {
             CheckIfDisposed();
-
             return _committed;
         }
     }
@@ -65,7 +63,6 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
     public void Clear()
     {
         CheckIfDisposed();
-
         ClearHelper();
     }
 
@@ -81,9 +78,9 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         CheckIfDisposed();
 
         if (stream == null)
-            throw new ArgumentNullException(nameof(stream));
+            ThrowArgumentNullException(nameof(stream));
         if (_rentedBuffer == null)
-            throw new ArgumentNullException(nameof(_rentedBuffer));
+            ThrowArgumentNullException(nameof(_rentedBuffer));
 
         await stream.WriteAsync(_rentedBuffer, 0, _written, cancellationToken).ConfigureAwait(false);
         _committed += _written;
@@ -96,10 +93,10 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         CheckIfDisposed();
 
         if (stream == null)
-            throw new ArgumentNullException(nameof(stream));
+            ThrowArgumentNullException(nameof(stream));
 
         if (_rentedBuffer == null)
-            throw new ArgumentNullException(nameof(_rentedBuffer));
+            ThrowArgumentNullException(nameof(_rentedBuffer));
 
         stream.Write(_rentedBuffer, 0, _written);
         _committed += _written;
@@ -112,10 +109,10 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         CheckIfDisposed();
 
         if (count < 0)
-            throw new ArgumentException(nameof(count));
+            ThrowArgumentNullException(nameof(count));
 
         if (_written > (_rentedBuffer?.Length ?? 0) - count)
-            throw new InvalidOperationException("Cannot advance past the end of the buffer.");
+            ThrowInvalidOperationException();
 
         _written += count;
     }
@@ -123,9 +120,7 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
     public void Dispose()
     {
         if (_rentedBuffer == null)
-        {
             return;
-        }
 
         ArrayPool<byte>.Shared.Return(_rentedBuffer, clearArray: true);
         _rentedBuffer = null;
@@ -188,4 +183,15 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
             ArrayPool<byte>.Shared.Return(oldBuffer, clearArray: true);
         }
     }
+
+    [DoesNotReturn]
+    static void ThrowArgumentNullException(string name)
+        => throw new ArgumentNullException(name);
+    [DoesNotReturn]
+    static void ThrowObjectDisposedException()
+        => throw new ObjectDisposedException(nameof(ArrayPoolBufferWriter));
+    [DoesNotReturn]
+    static void ThrowInvalidOperationException()
+        => throw new InvalidOperationException("Cannot advance past the end of the buffer.");
 }
+
