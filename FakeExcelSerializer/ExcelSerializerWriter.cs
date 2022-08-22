@@ -1,4 +1,5 @@
 ﻿using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -102,6 +103,7 @@ public class ExcelSerializerWriter : IDisposable
         _currentDepth--;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteRaw(ReadOnlySpan<byte> value) => _writer.Write(value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -152,6 +154,7 @@ public class ExcelSerializerWriter : IDisposable
         SetMaxLength(value.Length);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(char value) => Write($"{value}");
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -176,18 +179,30 @@ public class ExcelSerializerWriter : IDisposable
         SetMaxLength(chars.Length);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(byte value) => WriterNumber($"{value}");
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(sbyte value) => WriterNumber($"{value}");
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(decimal value) => WriterNumber($"{value}");
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(double value) => WriterNumber($"{value}");
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(float value) => WriterNumber($"{value}");
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(int value) => WriterNumber($"{value}");
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(uint value) => WriterNumber($"{value}");
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(long value) => WriterNumber($"{value}");
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(ulong value) => WriterNumber($"{value}");
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(short value) => WriterNumber($"{value}");
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(ushort value) => WriterNumber($"{value}");
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteDateTime(DateTime value)
     {
         var d = value;
@@ -203,18 +218,21 @@ public class ExcelSerializerWriter : IDisposable
         SetMaxLength(LEN_DATETIME);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteDateTime(DateOnly value)
     {
         Encoding.UTF8.GetBytes(@$"<c t=""d"" s=""{XF_DATE}""><v>{value:yyyy-MM-dd}T00:00:00</v></c>", _writer);
         SetMaxLength(LEN_DATE);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteDateTime(TimeOnly value)
     {
         Encoding.UTF8.GetBytes(@$"<c t=""d"" s=""{XF_TIME}""><v>1900-01-01T{value:HH:mm:ss}</v></c>", _writer);
         SetMaxLength(LEN_TIME);
     }
 
+    [DoesNotReturn]
     static void ThrowReachedMaxDepth(int depth)
     {
         throw new InvalidOperationException($"Serializer detects reached max depth:{depth}. Please check the circular reference.");
