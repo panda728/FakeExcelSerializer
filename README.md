@@ -1,5 +1,5 @@
 # FakeExcelSerializer
-Convert the object to an Excel readable file.　(.xlsx)
+Convert the object to an OpenOfficeXml Format file (.xlsx)
 
 ## Getting Started
 Supporting platform is .NET 6.
