@@ -31,7 +31,7 @@ public static class ExcelSerializer
 </Relationships>");
 
     readonly static string _styles = @"<styleSheet xmlns=""http://schemas.openxmlformats.org/spreadsheetml/2006/main"">
-<numFmts count=""2"">
+<numFmts count=""3"">
 <numFmt numFmtId=""1"" formatCode =""{0}"" />
 <numFmt numFmtId=""2"" formatCode =""{1}"" />
 <numFmt numFmtId=""3"" formatCode =""{2}"" />
@@ -48,7 +48,7 @@ public static class ExcelSerializer
 <cellStyleXfs count=""1"">
 <xf/>
 </cellStyleXfs>
-<cellXfs count=""4"">
+<cellXfs count=""5"">
 <xf/>
 <xf><alignment wrapText=""true""/></xf>
 <xf numFmtId=""1""  applyNumberFormat=""1""></xf>

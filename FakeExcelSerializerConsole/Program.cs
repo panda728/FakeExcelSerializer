@@ -58,7 +58,7 @@ var newConfig = ExcelSerializerOptions.Default with
         new[] { new BoolZeroOneSerializer() },
         new[] { ExcelSerializerProvider.Default }),
     HasHeaderRecord = true,
-    HeaderTitles = new string[] { "Id", "FName", "LName", "Name", "UserID", "Email", "Key", "Guid", "Flag", "Profile", "CartGuid", "TEL", "UnixTime", "Create Time", "Date", "Time", "TimeSpan", "DateTimeOffset", "Fallback", "Uri", "Gender", "OrderNumber1", "Item1", "Qty1", "Lot1", "OrderNumber2", "Item2", "Qty", "Lot2", "OrderNumber3", "Item3", "Qty3", "Lot3", "Value" },
+    HeaderTitles = new string[] { "Id", "FName", "LName", "Name", "UserID", "Email", "Key", "Guid", "Flag", "Profile", "CartGuid", "TEL", "UnixTime", "Create Time", "Date", "Time", "TimeSpan", "DateTimeOffset", "Fallback", "Uri", "Gender", "OrderNumber1", "Item1", "Qty1", "Lot1", "OrderNumber2", "Item2", "Qty", "Lot2", "OrderNumber3", "Item3", "Qty3", "Lot3", "Value", "Char" },
     AutoFitColumns = true,
 };
 

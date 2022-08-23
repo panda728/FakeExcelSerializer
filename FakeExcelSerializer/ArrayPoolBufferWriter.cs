@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 
 namespace FakeExcelSerializer;
 
@@ -131,7 +132,7 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
     void CheckIfDisposed()
     {
         if (_rentedBuffer == null)
-            throw new ObjectDisposedException(nameof(ArrayPoolBufferWriter));
+            ThrowObjectDisposedException();
     }
 
     public Memory<byte> GetMemory(int sizeHint = 0)
@@ -139,7 +140,7 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         CheckIfDisposed();
 
         if (sizeHint < 0)
-            throw new ArgumentException(null, nameof(sizeHint));
+            ThrowArgumentException(nameof(sizeHint));
 
         CheckAndResizeBuffer(sizeHint);
         return _rentedBuffer.AsMemory(_written);
@@ -150,7 +151,7 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         CheckIfDisposed();
 
         if (sizeHint < 0)
-            throw new ArgumentException(null, nameof(sizeHint));
+            ThrowArgumentException(nameof(sizeHint));
 
         CheckAndResizeBuffer(sizeHint);
         return _rentedBuffer.AsSpan(_written);
@@ -193,5 +194,8 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
     [DoesNotReturn]
     static void ThrowInvalidOperationException()
         => throw new InvalidOperationException("Cannot advance past the end of the buffer.");
+    [DoesNotReturn]
+    static void ThrowArgumentException(string name)
+        => throw new ArgumentException(null, name);
 }
 
