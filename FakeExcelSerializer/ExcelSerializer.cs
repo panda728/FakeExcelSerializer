@@ -31,7 +31,7 @@ public static class ExcelSerializer
 </Relationships>");
 
     readonly static string _styles = @"<styleSheet xmlns=""http://schemas.openxmlformats.org/spreadsheetml/2006/main"">
-<numFmts count=""2"">
+<numFmts count=""3"">
 <numFmt numFmtId=""1"" formatCode =""{0}"" />
 <numFmt numFmtId=""2"" formatCode =""{1}"" />
 <numFmt numFmtId=""3"" formatCode =""{2}"" />
@@ -48,7 +48,7 @@ public static class ExcelSerializer
 <cellStyleXfs count=""1"">
 <xf/>
 </cellStyleXfs>
-<cellXfs count=""4"">
+<cellXfs count=""5"">
 <xf/>
 <xf><alignment wrapText=""true""/></xf>
 <xf numFmtId=""1""  applyNumberFormat=""1""></xf>
@@ -229,6 +229,7 @@ public static class ExcelSerializer
         // Counting the number of characters in Writer's internal process
         // The result is stored in writer.ColumnMaxLength 
         var serializer = options.GetSerializer<T>();
+        if (serializer == null) return;
         if (options.HasHeaderRecord && options.HeaderTitles != null)
         {
             foreach (var t in options.HeaderTitles)
@@ -237,12 +238,13 @@ public static class ExcelSerializer
         }
         foreach (var row in rows.Take(options.AutoFitDepth))
         {
-            serializer?.Serialize(ref writer, row, options);
+            serializer.Serialize(ref writer, row, options);
             writer.Clear();
         }
         writer.StopCountingCharLength();
 
-        using var buffer = new ArrayPoolBufferWriter();
+        var size = 100 * writer.ColumnMaxLength.Count;
+        using var buffer = new ArrayPoolBufferWriter(size);
         buffer.Write(_colStart);
         foreach (var pair in writer.ColumnMaxLength)
         {
@@ -255,7 +257,6 @@ public static class ExcelSerializer
         }
         buffer.Write(_colEnd);
         buffer.CopyTo(stream);
-        buffer.Clear();
     }
 
     static void WriteSharedStrings(Stream stream, ExcelSerializerWriter writer)

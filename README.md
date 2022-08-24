@@ -1,5 +1,5 @@
 # FakeExcelSerializer
-Convert the object to an Excel readable file.　(.xlsx)
+Convert the object to a file in Open XML SpreadsheetML File Format (.xlsx)
 
 ## Getting Started
 Supporting platform is .NET 6.
@@ -72,6 +72,11 @@ The following page provides information on how to return to OpenOfficeXml.
 　https://gist.github.com/iso2022jp/721df3095f4df512bfe2327503ea1119
 
 　https://docs.microsoft.com/en-us/openspecs/office_standards/ms-xlsx/2c5dee00-eff2-4b22-92b6-0738acd4475e
+
+## Sample Extensions
+WindowsForm's DataGridView to .xlsx
+
+https://github.com/panda728/DataGridViewDump
 
 ## Link
 CSV-like File output version
