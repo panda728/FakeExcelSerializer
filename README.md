@@ -74,6 +74,8 @@ The following page provides information on how to return to OpenOfficeXml.
 　https://docs.microsoft.com/en-us/openspecs/office_standards/ms-xlsx/2c5dee00-eff2-4b22-92b6-0738acd4475## Benckma
 
 ## Benchmark
+N = 100 lines.
+
 |              Method |   N |        Mean |      Error |     StdDev |      Median | Ratio | RatioSD |      Gen 0 |      Gen 1 |     Gen 2 |  Allocated |
 |-------------------- |---- |------------:|-----------:|-----------:|------------:|------:|--------:|-----------:|-----------:|----------:|-----------:|
 |           ClosedXml |   1 |    63.63 ms |   1.730 ms |   5.048 ms |    63.00 ms |  1.00 |    0.00 |  1000.0000 |          - |         - |   5,738 KB |
