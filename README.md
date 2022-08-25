@@ -1,5 +1,5 @@
 # FakeExcelSerializer
-Convert the object to a file in Excel File(.xlsx) [Open XML SpreadsheetML File Format]
+Convert object to Excel file (.xlsx) [Open XML SpreadsheetML File Format]
 
 ## Getting Started
 Supporting platform is .NET 6.
