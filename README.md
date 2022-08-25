@@ -19,6 +19,27 @@ ExcelSerializer.ToFile(Users, "test.xlsx", ExcelSerializerOptions.Default);
 
 Folder creation permissions are required since a working folder will be used.
 
+## Benchmark
+N = 100 lines.
+
+BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19043.1889 (21H1/May2021Update)
+11th Gen Intel Core i7-1165G7 2.80GHz, 1 CPU, 8 logical and 4 physical cores
+.NET SDK=6.0.301
+  [Host]     : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT  [AttachedDebugger]
+  DefaultJob : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT
+
+
+|              Method |   N |         Mean |      Error |     StdDev | Ratio |      Gen 0 |      Gen 1 |     Gen 2 |  Allocated |
+|-------------------- |---- |-------------:|-----------:|-----------:|------:|-----------:|-----------:|----------:|-----------:|
+|           ClosedXml |   1 |    36.078 ms |  0.3324 ms |  0.3109 ms |  1.00 |   857.1429 |   357.1429 |         - |   5,734 KB |
+| FakeExcelSerializer |   1 |     4.587 ms |  0.0397 ms |  0.0332 ms |  0.13 |    15.6250 |     7.8125 |         - |     127 KB |
+|                     |     |              |            |            |       |            |            |           |            |
+|           ClosedXml |  10 |   343.416 ms |  5.7000 ms |  4.7598 ms |  1.00 |  8000.0000 |  1000.0000 |         - |  52,661 KB |
+| FakeExcelSerializer |  10 |     9.067 ms |  0.0850 ms |  0.0709 ms |  0.03 |    93.7500 |    31.2500 |         - |     661 KB |
+|                     |     |              |            |            |       |            |            |           |            |
+|           ClosedXml | 100 | 3,663.531 ms | 23.3744 ms | 20.7208 ms |  1.00 | 81000.0000 | 22000.0000 | 5000.0000 | 513,936 KB |
+| FakeExcelSerializer | 100 |    47.989 ms |  0.9378 ms |  0.8773 ms |  0.01 |   909.0909 |    90.9091 |         - |   6,005 KB |
+
 ## Examples
 
 If you pass an object, it will be converted to an Excel file.
@@ -72,21 +93,6 @@ The following page provides information on how to return to OpenOfficeXml.
 　https://gist.github.com/iso2022jp/721df3095f4df512bfe2327503ea1119
 
 　https://docs.microsoft.com/en-us/openspecs/office_standards/ms-xlsx/2c5dee00-eff2-4b22-92b6-0738acd4475## Benckma
-
-## Benchmark
-N = 100 lines.
-
-|              Method |   N |        Mean |      Error |     StdDev |      Median | Ratio | RatioSD |      Gen 0 |      Gen 1 |     Gen 2 |  Allocated |
-|-------------------- |---- |------------:|-----------:|-----------:|------------:|------:|--------:|-----------:|-----------:|----------:|-----------:|
-|           ClosedXml |   1 |    63.63 ms |   1.730 ms |   5.048 ms |    63.00 ms |  1.00 |    0.00 |  1000.0000 |          - |         - |   5,738 KB |
-| FakeExcelSerializer |   1 |    19.62 ms |   0.392 ms |   0.677 ms |    19.53 ms |  0.30 |    0.03 |          - |          - |         - |     126 KB |
-|                     |     |             |            |            |             |       |         |            |            |           |            |
-|           ClosedXml |  10 |   631.47 ms |  12.544 ms |  17.170 ms |   627.75 ms |  1.00 |    0.00 |  9000.0000 |  1000.0000 |         - |  52,660 KB |
-| FakeExcelSerializer |  10 |    29.66 ms |   0.592 ms |   1.629 ms |    29.11 ms |  0.05 |    0.00 |   156.2500 |    31.2500 |         - |     661 KB |
-|                     |     |             |            |            |             |       |         |            |            |           |            |
-|           ClosedXml | 100 | 6,980.32 ms | 127.032 ms | 112.610 ms | 6,941.43 ms |  1.00 |    0.00 | 91000.0000 | 22000.0000 | 5000.0000 | 513,934 KB |
-| FakeExcelSerializer | 100 |    82.42 ms |   1.546 ms |   1.655 ms |    82.30 ms |  0.01 |    0.00 |  1428.5714 |   142.8571 |         - |   6,004 KB |
-
 ## Sample Extensions
 WindowsForm's DataGridView to .xlsx
 
