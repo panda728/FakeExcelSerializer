@@ -22,13 +22,6 @@ Folder creation permissions are required since a working folder will be used.
 ## Benchmark
 N = 100 lines.
 
-BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19043.1889 (21H1/May2021Update)
-11th Gen Intel Core i7-1165G7 2.80GHz, 1 CPU, 8 logical and 4 physical cores
-.NET SDK=6.0.301
-  [Host]     : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT  [AttachedDebugger]
-  DefaultJob : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT
-
-
 |              Method |   N |         Mean |      Error |     StdDev | Ratio |      Gen 0 |      Gen 1 |     Gen 2 |  Allocated |
 |-------------------- |---- |-------------:|-----------:|-----------:|------:|-----------:|-----------:|----------:|-----------:|
 |           ClosedXml |   1 |    36.078 ms |  0.3324 ms |  0.3109 ms |  1.00 |   857.1429 |   357.1429 |         - |   5,734 KB |
