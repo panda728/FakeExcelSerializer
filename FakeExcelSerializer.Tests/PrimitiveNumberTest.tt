@@ -7,17 +7,9 @@
 <#
 	var primitives = new[]
 	{
-		typeof(byte),
-		typeof(sbyte),
 		typeof(decimal),
 		typeof(double),
 		typeof(float),
-		typeof(int),
-		// typeof(nint),
-		typeof(uint),
-		// typeof(nuint),
-		typeof(long),
-		typeof(ulong),
 		typeof(short),
 		typeof(ushort)
 	};

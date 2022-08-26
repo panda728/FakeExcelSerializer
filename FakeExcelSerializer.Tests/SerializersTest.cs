@@ -76,7 +76,7 @@ namespace FakeExcelSerializer.Tests
         {
             var dic = new Dictionary<string, int> { { "key1", 1 }, { "key2", 2 } };
             RunTest(dic, "key1", "key2",
-                "<c t=\"s\"><v>0</v></c><c t=\"n\"><v>1</v></c><c t=\"s\"><v>1</v></c><c t=\"n\"><v>2</v></c>",
+                "<c t=\"s\"><v>0</v></c><c t=\"n\" s=\"5\"><v>1</v></c><c t=\"s\"><v>1</v></c><c t=\"n\" s=\"5\"><v>2</v></c>",
                 ExcelSerializerOptions.Default);
         }
         [Fact]
@@ -84,7 +84,7 @@ namespace FakeExcelSerializer.Tests
         {
             var dic = new Dictionary<string, int> { { "key1", 1 }, { "key2", 2 } };
             RunTest(dic.First(), "key1",
-                "<c t=\"s\"><v>0</v></c><c t=\"n\"><v>1</v></c>",
+                "<c t=\"s\"><v>0</v></c><c t=\"n\" s=\"5\"><v>1</v></c>",
                 ExcelSerializerOptions.Default);
         }
         [Fact]
@@ -99,7 +99,7 @@ namespace FakeExcelSerializer.Tests
         public void Serializer_CompiledObject()
         {
             var potals1 = new Portal { Name = "Portal1", Owner = null, Level = 8 };
-            CompiledObjectTest(potals1, "Portal1", "<c t=\"s\"><v>0</v></c><c></c><c t=\"n\"><v>8</v></c>", ExcelSerializerOptions.Default);
+            CompiledObjectTest(potals1, "Portal1", "<c t=\"s\"><v>0</v></c><c></c><c t=\"n\" s=\"5\"><v>8</v></c>", ExcelSerializerOptions.Default);
         }
 
         void CompiledObjectTest<T>(
