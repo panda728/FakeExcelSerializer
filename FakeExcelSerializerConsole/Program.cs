@@ -15,7 +15,7 @@ var testOrders = new Faker<Order>()
     .StrictMode(true)
     .RuleFor(o => o.OrderId, f => orderIds++)
     .RuleFor(o => o.Item, f => f.PickRandom(fruit))
-    .RuleFor(o => o.Quantity, f => f.Random.Number(1, 10))
+    .RuleFor(o => o.Quantity, f => f.Random.Number(-10, 10))
     .RuleFor(o => o.LotNumber, f => f.Random.Int(0, 100).OrNull(f, .8f));
 
 var userIds = 0;
@@ -41,7 +41,7 @@ var testUsers = new Faker<User>()
     .RuleFor(u => u.CartId, f => f.Random.Guid())
     .RuleFor(u => u.FullName, (f, u) => u.FirstName + " " + u.LastName)
     .RuleFor(u => u.Orders, f => testOrders.Generate(3).ToList())
-    .RuleFor(o => o.Value, f => f.Random.Double(0, 1000))
+    .RuleFor(o => o.Value, f => f.Random.Double(-1000, 1000))
     .RuleFor(o => o.Char, f => (char)f.Random.Int(65, 65 + 26));
 
 var Users = testUsers.Generate(100000);

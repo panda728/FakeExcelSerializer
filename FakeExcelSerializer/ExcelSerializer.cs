@@ -30,10 +30,12 @@ public static class ExcelSerializer
 </Relationships>");
 
     readonly static string _styles = @"<styleSheet xmlns=""http://schemas.openxmlformats.org/spreadsheetml/2006/main"">
-<numFmts count=""3"">
+<numFmts count=""5"">
 <numFmt numFmtId=""1"" formatCode =""{0}"" />
 <numFmt numFmtId=""2"" formatCode =""{1}"" />
 <numFmt numFmtId=""3"" formatCode =""{2}"" />
+<numFmt numFmtId=""4"" formatCode =""{3}"" />
+<numFmt numFmtId=""5"" formatCode =""{4}"" />
 </numFmts>
 <fonts count=""1"">
 <font/>
@@ -47,12 +49,14 @@ public static class ExcelSerializer
 <cellStyleXfs count=""1"">
 <xf/>
 </cellStyleXfs>
-<cellXfs count=""5"">
+<cellXfs count=""7"">
 <xf/>
 <xf><alignment wrapText=""true""/></xf>
 <xf numFmtId=""1""  applyNumberFormat=""1""></xf>
 <xf numFmtId=""2""  applyNumberFormat=""1""></xf>
 <xf numFmtId=""3""  applyNumberFormat=""1""></xf>
+<xf numFmtId=""4""  applyNumberFormat=""1""></xf>
+<xf numFmtId=""5""  applyNumberFormat=""1""></xf>
 </cellXfs>
 </styleSheet>";
 
@@ -102,7 +106,9 @@ public static class ExcelSerializer
                 _styles,
                 options.DateTimeFormat,
                 options.DateFormat,
-                options.TimeFormat
+                options.TimeFormat,
+                options.IntegerFormat,
+                options.NumberFormat
             ));
 
             Task.WaitAll(

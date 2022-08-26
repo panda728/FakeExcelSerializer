@@ -12,6 +12,8 @@ public class ExcelSerializerWriter : IDisposable
     const int XF_DATETIME = 2;
     const int XF_DATE = 3;
     const int XF_TIME = 4;
+    const int XF_INT = 5;
+    const int XF_NUM = 6;
 
     const int LEN_DATE = 10;
     const int LEN_DATETIME = 18;
@@ -19,7 +21,8 @@ public class ExcelSerializerWriter : IDisposable
 
     static readonly byte[] _emptyColumn = Encoding.UTF8.GetBytes("<c></c>");
     static readonly byte[] _colStartBoolean = Encoding.UTF8.GetBytes(@"<c t=""b""><v>");
-    static readonly byte[] _colStartNumber = Encoding.UTF8.GetBytes(@"<c t=""n""><v>");
+    static readonly byte[] _colStartInteger = Encoding.UTF8.GetBytes(@$"<c t=""n"" s=""{XF_INT}""><v>");
+    static readonly byte[] _colStartNumber = Encoding.UTF8.GetBytes(@$"<c t=""n"" s=""{XF_NUM}""><v>");
     static readonly byte[] _colStartStringWrap = Encoding.UTF8.GetBytes(@$"<c t=""s"" s=""{XF_WRAP_TEXT}""><v>");
     static readonly byte[] _colStartString = Encoding.UTF8.GetBytes(@$"<c t=""s""><v>");
     static readonly byte[] _colEnd = Encoding.UTF8.GetBytes(@"</v></c>");
@@ -170,6 +173,16 @@ public class ExcelSerializerWriter : IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    void WriterInteger(in ReadOnlySpan<char> chars)
+    {
+        _writer.Write(_colStartInteger);
+        _ = Encoding.UTF8.GetBytes(chars, _writer);
+        _writer.Write(_colEnd);
+
+        SetMaxLength(chars.Length);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void WriterNumber(in ReadOnlySpan<char> chars)
     {
         _writer.Write(_colStartNumber);
@@ -180,9 +193,9 @@ public class ExcelSerializerWriter : IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(byte value) => WriterNumber($"{value}");
+    public void WritePrimitive(byte value) => WriterInteger($"{value}");
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(sbyte value) => WriterNumber($"{value}");
+    public void WritePrimitive(sbyte value) => WriterInteger($"{value}");
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(decimal value) => WriterNumber($"{value}");
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -190,13 +203,13 @@ public class ExcelSerializerWriter : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(float value) => WriterNumber($"{value}");
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(int value) => WriterNumber($"{value}");
+    public void WritePrimitive(int value) => WriterInteger($"{value}");
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(uint value) => WriterNumber($"{value}");
+    public void WritePrimitive(uint value) => WriterInteger($"{value}");
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(long value) => WriterNumber($"{value}");
+    public void WritePrimitive(long value) => WriterInteger($"{value}");
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(ulong value) => WriterNumber($"{value}");
+    public void WritePrimitive(ulong value) => WriterInteger($"{value}");
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(short value) => WriterNumber($"{value}");
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
