@@ -20,9 +20,8 @@ public static class ExcelSerializer
 </Relationships>");
 
     readonly static byte[] _book = Encoding.UTF8.GetBytes(@"<workbook xmlns=""http://schemas.openxmlformats.org/spreadsheetml/2006/main"" xmlns:r=""http://schemas.openxmlformats.org/officeDocument/2006/relationships"">
-<sheets>
-<sheet name=""Sheet"" sheetId=""1"" r:id=""rId1""/>
-</sheets>
+<bookViews><workbookView/></bookViews>
+<sheets><sheet name=""Sheet"" sheetId=""1"" r:id=""rId1""/></sheets>
 </workbook>");
     readonly static byte[] _bookRels = Encoding.UTF8.GetBytes(@"<Relationships xmlns=""http://schemas.openxmlformats.org/package/2006/relationships"">
 <Relationship Id=""rId1"" Target=""sheet.xml"" Type=""http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet""/>
