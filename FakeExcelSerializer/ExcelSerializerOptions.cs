@@ -19,6 +19,8 @@ public record ExcelSerializerOptions(IExcelSerializerProvider Provider)
     public string DateTimeFormat { get; init; } = "yyyy/mm/dd hh:mm;@";
     public string DateFormat { get; init; } = "yyyy/mm/dd;@";
     public string TimeFormat { get; init; } = "hh:mm;@";
+    public string IntegerFormat { get; init; } = "#,##0;[Red]\\-#,##0";
+    public string NumberFormat { get; init; } = "#,##0.00;[Red]\\-#,##0.00";
 
     public bool HasHeaderRecord { get; init; } = false;
     public string[]? HeaderTitles { get; init; }
