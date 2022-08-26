@@ -31,8 +31,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="PrimitiveTest.cs">
-      <DependentUpon>PrimitiveTest.tt</DependentUpon>
+    <Compile Update="PrimitiveIntegerTest.cs">
+      <DependentUpon>PrimitiveIntegerTest.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="PrimitiveNumberTest.cs">
+      <DependentUpon>PrimitiveNumberTest.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
@@ -44,8 +49,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="PrimitiveTest.tt">
-      <LastGenOutput>PrimitiveTest.cs</LastGenOutput>
+    <None Update="PrimitiveIntegerTest.tt">
+      <LastGenOutput>PrimitiveIntegerTest.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="PrimitiveNumberTest.tt">
+      <LastGenOutput>PrimitiveNumberTest.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
     <None Update="TupleTest.tt">

@@ -6,7 +6,7 @@
 <#
     const int MaxTupleCount = 8;
     string BuildArgParameter(int i) => i.ToString();
-    string BuildXmlParameter(int i) => string.Format(@"<c t=\""n\""><v>{0}</v></c>",i);
+    string BuildXmlParameter(int i) => string.Format(@"<c t=\""n\"" s=\""5\""><v>{0}</v></c>",i);
     string BuildArgsParameters(int i) => string.Join(", ", Enumerable.Range(1, i).Select(BuildArgParameter));
     string BuildXmlParameters(int i) => string.Join("",Enumerable.Range(1, i).Select(BuildXmlParameter));
 #>

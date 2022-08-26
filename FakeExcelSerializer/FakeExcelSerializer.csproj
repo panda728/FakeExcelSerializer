@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>FakeExcelSerializer</Title>
-    <Version>1.0.3</Version>
+    <Version>1.1.0</Version>
     <Authors>Hideyuki Kitao</Authors>
     <Company />
     <Description>FakeExcelSerialiser converts object into Excel file</Description>
