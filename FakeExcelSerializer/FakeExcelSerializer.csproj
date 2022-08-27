@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net5.0;net6.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -9,6 +9,7 @@
     <Version>1.1.0</Version>
     <Authors>Hideyuki Kitao</Authors>
     <Company />
+    <LangVersion>10.0</LangVersion>
     <Description>FakeExcelSerialiser converts object into Excel file</Description>
     <PackageProjectUrl>https://github.com/panda728/FakeExcelSerializer</PackageProjectUrl>
     <Copyright>Copyright (c) Hideyuki Kitao 2022</Copyright>
@@ -16,6 +17,14 @@
     <RepositoryUrl>https://github.com/panda728/FakeExcelSerializer</RepositoryUrl>
   </PropertyGroup>
 
+  <ItemGroup Condition="$(TargetFramework) == 'netstandard2.0' or $(TargetFramework) == 'netstandard2.1'">
+    <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == 'netstandard2.0'">
+    <PackageReference Include="System.Memory" Version="4.5.4" />
+  </ItemGroup>
+  
   <ItemGroup>
     <None Update="Serializers\PrimitiveSerializers.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

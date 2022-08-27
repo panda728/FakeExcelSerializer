@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 
 namespace FakeExcelSerializer;
@@ -35,6 +36,9 @@ public record ExcelSerializerOptions(IExcelSerializerProvider Provider)
         return serializer!;
     }
 
+#if !NETSTANDARD2_0
+    [DoesNotReturn]
+#endif
     void Throw(Type type)
     {
         throw new InvalidOperationException($"Type is not found in provider. Type:{type}");

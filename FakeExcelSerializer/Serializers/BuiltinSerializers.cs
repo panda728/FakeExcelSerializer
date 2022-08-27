@@ -58,6 +58,7 @@ internal class BuiltinSerializers
         }
     }
 
+#if NET6_0_OR_GREATER
     public sealed class DateOnlyExcelSerializer : IExcelSerializer<DateOnly>
     {
         public void Serialize(ref ExcelSerializerWriter writer, DateOnly value, ExcelSerializerOptions options)
@@ -69,4 +70,5 @@ internal class BuiltinSerializers
         public void Serialize(ref ExcelSerializerWriter writer, TimeOnly value, ExcelSerializerOptions options)
             => writer.WriteDateTime(value);
     }
+#endif
 }
