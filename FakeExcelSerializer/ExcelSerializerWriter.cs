@@ -98,7 +98,6 @@ public class ExcelSerializerWriter : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void EnterAndValidate()
     {
-        //_first = true;
         _currentDepth++;
         if (_currentDepth >= _options.MaxDepth)
             ThrowReachedMaxDepth(_currentDepth);
@@ -132,7 +131,8 @@ public class ExcelSerializerWriter : IDisposable
         {
             if (ColumnMaxLength[_columnIndex] < length)
                 ColumnMaxLength[_columnIndex] = length;
-        }else
+        }
+        else
         {
             ColumnMaxLength.Add(_columnIndex, length);
         }
@@ -169,6 +169,7 @@ public class ExcelSerializerWriter : IDisposable
         }
         else
         {
+            SharedStrings.Add(value, _stringIndex);
             index = _stringIndex++;
         }
 #else
@@ -177,9 +178,7 @@ public class ExcelSerializerWriter : IDisposable
             : SharedStrings[value];
 #endif
         WriteUtf8Bytes($"{index}");
-
         _writer.Write(_colEnd);
-
         SetMaxLength(value.Length);
     }
 
@@ -193,11 +192,12 @@ public class ExcelSerializerWriter : IDisposable
         Encoding.UTF8.GetBytes(s.AsSpan(), _writer);
 #endif
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void WriteUtf8Bytes(ReadOnlySpan<char> s)
     {
 #if NETSTANDARD2_0 || NETSTANDARD2_1
-        var bytes = Encoding.UTF8.GetBytes(s.ToString());
+        var bytes = Encoding.UTF8.GetBytes(s.ToArray());
         _writer.Write(bytes);
 #else
         Encoding.UTF8.GetBytes(s, _writer);
@@ -228,15 +228,6 @@ public class ExcelSerializerWriter : IDisposable
         SetMaxLength(chars.Length);
     }
 
-    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-    //void WriterInteger(in string s)
-    //{
-    //    _writer.Write(_colStartInteger);
-    //    WriteUtf8Bytes(s);
-    //    _writer.Write(_colEnd);
-    //    SetMaxLength(s.Length);
-    //}
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void WriterNumber(in ReadOnlySpan<char> chars)
     {
@@ -246,16 +237,6 @@ public class ExcelSerializerWriter : IDisposable
 
         SetMaxLength(chars.Length);
     }
-
-    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-    //void WriterNumber(in string s)
-    //{
-    //    _writer.Write(_colStartNumber);
-    //    WriteUtf8Bytes(s);
-    //    _writer.Write(_colEnd);
-
-    //    SetMaxLength(s.Length);
-    //}
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(byte value) => WriterInteger($"{value}".AsSpan());

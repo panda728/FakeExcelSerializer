@@ -1,8 +1,6 @@
 ﻿using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Xml.Linq;
 
 namespace FakeExcelSerializer;
 
@@ -79,13 +77,20 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         CheckIfDisposed();
 
         if (stream == null)
+        {
             ThrowArgumentNullException(nameof(stream));
+            return;
+        }
         if (_rentedBuffer == null)
+        {
             ThrowArgumentNullException(nameof(_rentedBuffer));
+            return;
+        }
+
 #if NET6_0_OR_GREATER
-        await stream.WriteAsync(_rentedBuffer.AsMemory(0, _written)).ConfigureAwait(false);
+        await stream.WriteAsync(_rentedBuffer.AsMemory(0, _written));
 #else
-        await stream.WriteAsync(_rentedBuffer, 0, _written).ConfigureAwait(false);
+        await stream.WriteAsync(_rentedBuffer, 0, _written);
 #endif
         _committed += _written;
 
@@ -97,14 +102,19 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         CheckIfDisposed();
 
         if (stream == null)
+        {
             ThrowArgumentNullException(nameof(stream));
+            return;
+        }
 
         if (_rentedBuffer == null)
+        {
             ThrowArgumentNullException(nameof(_rentedBuffer));
+            return;
+        }
 
         stream.Write(_rentedBuffer, 0, _written);
         _committed += _written;
-
         ClearHelper();
     }
 
@@ -113,10 +123,16 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         CheckIfDisposed();
 
         if (count < 0)
+        {
             ThrowArgumentNullException(nameof(count));
+            return;
+        }
 
         if (_written > (_rentedBuffer?.Length ?? 0) - count)
+        {
             ThrowInvalidOperationException();
+            return;
+        }
 
         _written += count;
     }
@@ -136,7 +152,10 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
     void CheckIfDisposed()
     {
         if (_rentedBuffer == null)
+        {
             ThrowObjectDisposedException();
+            return;
+        }
     }
 
     public Memory<byte> GetMemory(int sizeHint = 0)
