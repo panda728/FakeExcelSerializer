@@ -15,9 +15,11 @@ public sealed class BuiltinExcelSerializerProvider : IExcelSerializerProvider
             { typeof(DateTimeOffset), new  BuiltinSerializers.DateTimeOffsetExcelSerializer() },
             { typeof(TimeSpan), new  BuiltinSerializers.TimeSpanExcelSerializer() },
             { typeof(Uri), new  BuiltinSerializers.UriExcelSerializer() },
+#if NET6_0_OR_GREATER
             { typeof(DateOnly), new  BuiltinSerializers.DateOnlyExcelSerializer() },
             { typeof(TimeOnly), new  BuiltinSerializers.TimeOnlyExcelSerializer() },
-        };
+#endif
+    };
 
     public IExcelSerializer<T>? GetSerializer<T>()
     {

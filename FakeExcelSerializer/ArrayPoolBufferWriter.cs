@@ -1,8 +1,6 @@
 ﻿using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Xml.Linq;
 
 namespace FakeExcelSerializer;
 
@@ -74,16 +72,23 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         _written = 0;
     }
 
-    public async Task CopyToAsync(Stream stream, CancellationToken cancellationToken = default)
+    public async Task CopyToAsync(Stream stream)
     {
         CheckIfDisposed();
 
         if (stream == null)
+        {
             ThrowArgumentNullException(nameof(stream));
+            return;
+        }
         if (_rentedBuffer == null)
+        {
             ThrowArgumentNullException(nameof(_rentedBuffer));
+            return;
+        }
 
-        await stream.WriteAsync(_rentedBuffer, 0, _written, cancellationToken).ConfigureAwait(false);
+        await stream.WriteAsync(_rentedBuffer, 0, _written);
+
         _committed += _written;
 
         ClearHelper();
@@ -94,14 +99,19 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         CheckIfDisposed();
 
         if (stream == null)
+        {
             ThrowArgumentNullException(nameof(stream));
+            return;
+        }
 
         if (_rentedBuffer == null)
+        {
             ThrowArgumentNullException(nameof(_rentedBuffer));
+            return;
+        }
 
         stream.Write(_rentedBuffer, 0, _written);
         _committed += _written;
-
         ClearHelper();
     }
 
@@ -110,10 +120,16 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         CheckIfDisposed();
 
         if (count < 0)
+        {
             ThrowArgumentNullException(nameof(count));
+            return;
+        }
 
         if (_written > (_rentedBuffer?.Length ?? 0) - count)
+        {
             ThrowInvalidOperationException();
+            return;
+        }
 
         _written += count;
     }
@@ -126,13 +142,17 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         ArrayPool<byte>.Shared.Return(_rentedBuffer, clearArray: true);
         _rentedBuffer = null;
         _written = 0;
+        GC.SuppressFinalize(this);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void CheckIfDisposed()
     {
         if (_rentedBuffer == null)
+        {
             ThrowObjectDisposedException();
+            return;
+        }
     }
 
     public Memory<byte> GetMemory(int sizeHint = 0)
@@ -185,16 +205,27 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         }
     }
 
+#if !NETSTANDARD2_0
     [DoesNotReturn]
+#endif
     static void ThrowArgumentNullException(string name)
         => throw new ArgumentNullException(name);
+
+#if !NETSTANDARD2_0
     [DoesNotReturn]
+#endif
     static void ThrowObjectDisposedException()
         => throw new ObjectDisposedException(nameof(ArrayPoolBufferWriter));
+
+#if !NETSTANDARD2_0
     [DoesNotReturn]
+#endif
     static void ThrowInvalidOperationException()
         => throw new InvalidOperationException("Cannot advance past the end of the buffer.");
+
+#if !NETSTANDARD2_0
     [DoesNotReturn]
+#endif
     static void ThrowArgumentException(string name)
         => throw new ArgumentException(null, name);
 }

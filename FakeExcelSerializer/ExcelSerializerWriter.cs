@@ -11,13 +11,16 @@ public class ExcelSerializerWriter : IDisposable
     const int XF_WRAP_TEXT = 1;
     const int XF_DATETIME = 2;
     const int XF_DATE = 3;
-    const int XF_TIME = 4;
     const int XF_INT = 5;
     const int XF_NUM = 6;
 
     const int LEN_DATE = 10;
     const int LEN_DATETIME = 18;
+
+#if NET6_0_OR_GREATER
+    const int XF_TIME = 4;
     const int LEN_TIME = 8;
+#endif
 
     static readonly byte[] _emptyColumn = Encoding.UTF8.GetBytes("<c></c>");
     static readonly byte[] _colStartBoolean = Encoding.UTF8.GetBytes(@"<c t=""b""><v>");
@@ -56,8 +59,12 @@ public class ExcelSerializerWriter : IDisposable
     public ReadOnlySpan<byte> AsSpan() => _writer.OutputAsSpan;
     public ReadOnlyMemory<byte> AsMemory() => _writer.OutputAsMemory;
     public long BytesCommitted() => _writer.BytesCommitted;
-    public override string ToString() => Encoding.UTF8.GetString(_writer.OutputAsSpan);
-
+    public override string ToString() => Encoding.UTF8.GetString(
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+        _writer.OutputAsSpan.ToArray());
+#else
+        _writer.OutputAsSpan);
+#endif
     /// <summary>
     /// Tally the maximum number of characters per column. For automatic column width adjustment
     /// </summary>
@@ -94,7 +101,6 @@ public class ExcelSerializerWriter : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void EnterAndValidate()
     {
-        //_first = true;
         _currentDepth++;
         if (_currentDepth >= _options.MaxDepth)
             ThrowReachedMaxDepth(_currentDepth);
@@ -123,18 +129,30 @@ public class ExcelSerializerWriter : IDisposable
         if (!_countingCharLength)
             return;
 
+#if NETSTANDARD2_0
+        if (ColumnMaxLength.ContainsKey(_columnIndex))
+        {
+            if (ColumnMaxLength[_columnIndex] < length)
+                ColumnMaxLength[_columnIndex] = length;
+        }
+        else
+        {
+            ColumnMaxLength.Add(_columnIndex, length);
+        }
+#else
         if (!ColumnMaxLength.TryAdd(_columnIndex, length))
         {
             if (ColumnMaxLength[_columnIndex] < length)
                 ColumnMaxLength[_columnIndex] = length;
         }
+#endif
         _columnIndex++;
     }
 
     /// <summary>Write string.</summary>
     public void Write(string? value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (value == null || string.IsNullOrEmpty(value))
         {
             WriteEmpty();
             return;
@@ -146,15 +164,47 @@ public class ExcelSerializerWriter : IDisposable
                 : _colStartString
         );
 
+#if NETSTANDARD2_0
+        var index = 0;
+        if (SharedStrings.ContainsKey(value))
+        {
+            index = SharedStrings[value];
+        }
+        else
+        {
+            SharedStrings.Add(value, _stringIndex);
+            index = _stringIndex++;
+        }
+#else
         var index = SharedStrings.TryAdd(value, _stringIndex)
             ? _stringIndex++
             : SharedStrings[value];
-
-        Encoding.UTF8.GetBytes($"{index}", _writer);
-
+#endif
+        WriteUtf8Bytes($"{index}");
         _writer.Write(_colEnd);
-
         SetMaxLength(value.Length);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    void WriteUtf8Bytes(string s)
+    {
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+        var bytes = Encoding.UTF8.GetBytes(s);
+        _writer.Write(bytes);
+#else
+        Encoding.UTF8.GetBytes(s.AsSpan(), _writer);
+#endif
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    void WriteUtf8Bytes(ReadOnlySpan<char> s)
+    {
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+        var bytes = Encoding.UTF8.GetBytes(s.ToArray());
+        _writer.Write(bytes);
+#else
+        Encoding.UTF8.GetBytes(s, _writer);
+#endif
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -166,7 +216,7 @@ public class ExcelSerializerWriter : IDisposable
         var s = $"{value}";
 
         _writer.Write(_colStartBoolean);
-        _ = Encoding.UTF8.GetBytes(s, _writer);
+        WriteUtf8Bytes(s);
         _writer.Write(_colEnd);
 
         SetMaxLength(s.Length);
@@ -176,9 +226,8 @@ public class ExcelSerializerWriter : IDisposable
     void WriterInteger(in ReadOnlySpan<char> chars)
     {
         _writer.Write(_colStartInteger);
-        _ = Encoding.UTF8.GetBytes(chars, _writer);
+        WriteUtf8Bytes(chars);
         _writer.Write(_colEnd);
-
         SetMaxLength(chars.Length);
     }
 
@@ -186,34 +235,34 @@ public class ExcelSerializerWriter : IDisposable
     void WriterNumber(in ReadOnlySpan<char> chars)
     {
         _writer.Write(_colStartNumber);
-        _ = Encoding.UTF8.GetBytes(chars, _writer);
+        WriteUtf8Bytes(chars);
         _writer.Write(_colEnd);
 
         SetMaxLength(chars.Length);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(byte value) => WriterInteger($"{value}");
+    public void WritePrimitive(byte value) => WriterInteger($"{value}".AsSpan());
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(sbyte value) => WriterInteger($"{value}");
+    public void WritePrimitive(sbyte value) => WriterInteger($"{value}".AsSpan());
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(decimal value) => WriterNumber($"{value}");
+    public void WritePrimitive(decimal value) => WriterNumber($"{value}".AsSpan());
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(double value) => WriterNumber($"{value}");
+    public void WritePrimitive(double value) => WriterNumber($"{value}".AsSpan());
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(float value) => WriterNumber($"{value}");
+    public void WritePrimitive(float value) => WriterNumber($"{value}".AsSpan());
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(int value) => WriterInteger($"{value}");
+    public void WritePrimitive(int value) => WriterInteger($"{value}".AsSpan());
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(uint value) => WriterInteger($"{value}");
+    public void WritePrimitive(uint value) => WriterInteger($"{value}".AsSpan());
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(long value) => WriterInteger($"{value}");
+    public void WritePrimitive(long value) => WriterInteger($"{value}".AsSpan());
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(ulong value) => WriterInteger($"{value}");
+    public void WritePrimitive(ulong value) => WriterInteger($"{value}".AsSpan());
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(short value) => WriterNumber($"{value}");
+    public void WritePrimitive(short value) => WriterNumber($"{value}".AsSpan());
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WritePrimitive(ushort value) => WriterNumber($"{value}");
+    public void WritePrimitive(ushort value) => WriterNumber($"{value}".AsSpan());
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteDateTime(DateTime value)
@@ -222,30 +271,34 @@ public class ExcelSerializerWriter : IDisposable
         if (d == DateTime.MinValue) WriteEmpty();
         if (d.Hour == 0 && d.Minute == 0 && d.Second == 0)
         {
-            Encoding.UTF8.GetBytes(@$"<c t=""d"" s=""{XF_DATE}""><v>{d:yyyy-MM-ddTHH:mm:ss}</v></c>", _writer);
+            WriteUtf8Bytes(@$"<c t=""d"" s=""{XF_DATE}""><v>{d:yyyy-MM-ddTHH:mm:ss}</v></c>");
             SetMaxLength(LEN_DATE);
             return;
         }
 
-        Encoding.UTF8.GetBytes(@$"<c t=""d"" s=""{XF_DATETIME}""><v>{d:yyyy-MM-ddTHH:mm:ss}</v></c>", _writer);
+        WriteUtf8Bytes(@$"<c t=""d"" s=""{XF_DATETIME}""><v>{d:yyyy-MM-ddTHH:mm:ss}</v></c>");
         SetMaxLength(LEN_DATETIME);
     }
 
+#if NET6_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteDateTime(DateOnly value)
     {
-        Encoding.UTF8.GetBytes(@$"<c t=""d"" s=""{XF_DATE}""><v>{value:yyyy-MM-dd}T00:00:00</v></c>", _writer);
+        WriteUtf8Bytes(@$"<c t=""d"" s=""{XF_DATE}""><v>{value:yyyy-MM-dd}T00:00:00</v></c>");
         SetMaxLength(LEN_DATE);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteDateTime(TimeOnly value)
     {
-        Encoding.UTF8.GetBytes(@$"<c t=""d"" s=""{XF_TIME}""><v>1900-01-01T{value:HH:mm:ss}</v></c>", _writer);
+        WriteUtf8Bytes(@$"<c t=""d"" s=""{XF_TIME}""><v>1900-01-01T{value:HH:mm:ss}</v></c>");
         SetMaxLength(LEN_TIME);
     }
+#endif
 
+#if !NETSTANDARD2_0
     [DoesNotReturn]
+#endif
     static void ThrowReachedMaxDepth(int depth)
     {
         throw new InvalidOperationException($"Serializer detects reached max depth:{depth}. Please check the circular reference.");
