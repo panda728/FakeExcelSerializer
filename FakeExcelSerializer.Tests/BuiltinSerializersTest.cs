@@ -151,6 +151,7 @@ namespace FakeExcelSerializer.Tests
                 "http://hoge.com/fuga", "http://hoge.com/fugafuga",
                 ExcelSerializerOptions.Default);
         }
+#if NET6_0_OR_GREATER
         [Fact]
         public void Serializer_DateOnly()
         {
@@ -169,5 +170,6 @@ namespace FakeExcelSerializer.Tests
             RunColumnTest(value1, "<c t=\"d\" s=\"4\"><v>1900-01-01T00:00:00</v></c>", option);
             RunColumnTest(value2, "<c t=\"d\" s=\"4\"><v>1900-01-01T23:59:59</v></c>", option);
         }
+#endif
     }
 }

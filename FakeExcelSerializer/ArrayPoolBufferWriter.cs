@@ -87,11 +87,8 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
             return;
         }
 
-#if NET6_0_OR_GREATER
-        await stream.WriteAsync(_rentedBuffer.AsMemory(0, _written));
-#else
         await stream.WriteAsync(_rentedBuffer, 0, _written);
-#endif
+
         _committed += _written;
 
         ClearHelper();

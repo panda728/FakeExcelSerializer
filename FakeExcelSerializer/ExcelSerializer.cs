@@ -125,10 +125,6 @@ public static class ExcelSerializer
 
             ZipFile.CreateFromDirectory(workPathRoot, fileName);
         }
-        catch
-        {
-            throw;
-        }
         finally
         {
             try
@@ -179,13 +175,16 @@ public static class ExcelSerializer
         if (serializer != null)
         {
 
-#if NETSTANDARD2_0 || NETSTANDARD2_1
-            WriteRows(rows, ref stream, ref writer, serializer, options);
-#else
+#if NET6_0_OR_GREATER
             if (rows is T[] arr)
                 WriteRowsSpan(arr.AsSpan(), ref stream, ref writer, serializer, options);
             else if (rows is List<T> list)
                 WriteRowsSpan(CollectionsMarshal.AsSpan(list), ref stream, ref writer, serializer, options);
+            else
+                WriteRows(rows, ref stream, ref writer, serializer, options);
+#else
+            if (rows is T[] arr)
+                WriteRowsSpan(arr.AsSpan(), ref stream, ref writer, serializer, options);
             else
                 WriteRows(rows, ref stream, ref writer, serializer, options);
 #endif

@@ -11,13 +11,16 @@ public class ExcelSerializerWriter : IDisposable
     const int XF_WRAP_TEXT = 1;
     const int XF_DATETIME = 2;
     const int XF_DATE = 3;
-    const int XF_TIME = 4;
     const int XF_INT = 5;
     const int XF_NUM = 6;
 
     const int LEN_DATE = 10;
     const int LEN_DATETIME = 18;
+
+#if NET6_0_OR_GREATER
+    const int XF_TIME = 4;
     const int LEN_TIME = 8;
+#endif
 
     static readonly byte[] _emptyColumn = Encoding.UTF8.GetBytes("<c></c>");
     static readonly byte[] _colStartBoolean = Encoding.UTF8.GetBytes(@"<c t=""b""><v>");
@@ -57,7 +60,7 @@ public class ExcelSerializerWriter : IDisposable
     public ReadOnlyMemory<byte> AsMemory() => _writer.OutputAsMemory;
     public long BytesCommitted() => _writer.BytesCommitted;
     public override string ToString() => Encoding.UTF8.GetString(
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETSTANDARD2_1
         _writer.OutputAsSpan.ToArray());
 #else
         _writer.OutputAsSpan);
@@ -149,7 +152,7 @@ public class ExcelSerializerWriter : IDisposable
     /// <summary>Write string.</summary>
     public void Write(string? value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (value == null || string.IsNullOrEmpty(value))
         {
             WriteEmpty();
             return;
