@@ -2,14 +2,14 @@
 Convert object to Excel file (.xlsx) [Open XML SpreadsheetML File Format]
 
 ## Getting Started
-Supporting platform is .NET 6.
+Supporting platform is .NET Standard 2.0, 2.1, .NET 5, .NET 6.
 
 ~~~
 PM> Install-Package FakeExcelSerializer
 ~~~
 
 ## Usage
-You can use `ExcelSerializer.ToFile`.
+You can use `ExcelSerializer.ToFile` to create .xlxs file.
 
 ~~~
 ExcelSerializer.ToFile(Users, "test.xlsx", ExcelSerializerOptions.Default);
