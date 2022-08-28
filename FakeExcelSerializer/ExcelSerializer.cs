@@ -114,14 +114,11 @@ public static class ExcelSerializer
                 options.NumberFormat
             ));
 
-            Task.WaitAll(
-                new Task[] {
-                    WriteStreamAsync(_contentTypes, Path.Combine(workPathRoot, "[Content_Types].xml")),
-                    WriteStreamAsync(_book, Path.Combine(workPathRoot, "book.xml")),
-                    WriteStreamAsync(_stylesBytes, Path.Combine(workPathRoot, "styles.xml")),
-                    WriteStreamAsync(_rels, Path.Combine(workRelPath, ".rels")),
-                    WriteStreamAsync(_bookRels, Path.Combine(workRelPath, "book.xml.rels"))
-                });
+            WriteStream(_contentTypes, Path.Combine(workPathRoot, "[Content_Types].xml"));
+            WriteStream(_book, Path.Combine(workPathRoot, "book.xml"));
+            WriteStream(_stylesBytes, Path.Combine(workPathRoot, "styles.xml"));
+            WriteStream(_rels, Path.Combine(workRelPath, ".rels"));
+            WriteStream(_bookRels, Path.Combine(workRelPath, "book.xml.rels"));
 
             if (File.Exists(fileName))
                 File.Delete(fileName);
@@ -143,10 +140,10 @@ public static class ExcelSerializer
         }
     }
 
-    static async Task WriteStreamAsync(byte[] bytes, string fileName)
+    static void WriteStream(byte[] bytes, string fileName)
     {
         using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
-            await fs.WriteAsync(bytes, 0, bytes.Length);
+            fs.Write(bytes, 0, bytes.Length);
     }
 
     static Stream CreateStream(string fileName)
