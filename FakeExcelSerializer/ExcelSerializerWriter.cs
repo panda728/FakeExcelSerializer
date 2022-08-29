@@ -60,10 +60,10 @@ public class ExcelSerializerWriter : IDisposable
     public ReadOnlyMemory<byte> AsMemory() => _writer.OutputAsMemory;
     public long BytesCommitted() => _writer.BytesCommitted;
     public override string ToString() => Encoding.UTF8.GetString(
-#if NETSTANDARD2_0 || NETSTANDARD2_1
-        _writer.OutputAsSpan.ToArray());
-#else
+#if NET5_0_OR_GREATER
         _writer.OutputAsSpan);
+#else
+        _writer.OutputAsSpan.ToArray());
 #endif
     /// <summary>
     /// Tally the maximum number of characters per column. For automatic column width adjustment
@@ -129,7 +129,13 @@ public class ExcelSerializerWriter : IDisposable
         if (!_countingCharLength)
             return;
 
-#if NETSTANDARD2_0
+#if NETSTANDARD2_1_OR_GREATER
+        if (!ColumnMaxLength.TryAdd(_columnIndex, length))
+        {
+            if (ColumnMaxLength[_columnIndex] < length)
+                ColumnMaxLength[_columnIndex] = length;
+        }
+#else
         if (ColumnMaxLength.ContainsKey(_columnIndex))
         {
             if (ColumnMaxLength[_columnIndex] < length)
@@ -138,12 +144,6 @@ public class ExcelSerializerWriter : IDisposable
         else
         {
             ColumnMaxLength.Add(_columnIndex, length);
-        }
-#else
-        if (!ColumnMaxLength.TryAdd(_columnIndex, length))
-        {
-            if (ColumnMaxLength[_columnIndex] < length)
-                ColumnMaxLength[_columnIndex] = length;
         }
 #endif
         _columnIndex++;
@@ -164,7 +164,11 @@ public class ExcelSerializerWriter : IDisposable
                 : _colStartString
         );
 
-#if NETSTANDARD2_0
+#if NETSTANDARD2_1_OR_GREATER
+        var index = SharedStrings.TryAdd(value, _stringIndex)
+            ? _stringIndex++
+            : SharedStrings[value];
+#else
         var index = 0;
         if (SharedStrings.ContainsKey(value))
         {
@@ -175,10 +179,6 @@ public class ExcelSerializerWriter : IDisposable
             SharedStrings.Add(value, _stringIndex);
             index = _stringIndex++;
         }
-#else
-        var index = SharedStrings.TryAdd(value, _stringIndex)
-            ? _stringIndex++
-            : SharedStrings[value];
 #endif
         WriteUtf8Bytes($"{index}");
         _writer.Write(_colEnd);
@@ -188,22 +188,20 @@ public class ExcelSerializerWriter : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void WriteUtf8Bytes(string s)
     {
-#if NETSTANDARD2_0 || NETSTANDARD2_1
-        var bytes = Encoding.UTF8.GetBytes(s);
-        _writer.Write(bytes);
-#else
+#if NET5_0_OR_GREATER
         Encoding.UTF8.GetBytes(s.AsSpan(), _writer);
+#else
+        _writer.Write(Encoding.UTF8.GetBytes(s));
 #endif
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void WriteUtf8Bytes(ReadOnlySpan<char> s)
     {
-#if NETSTANDARD2_0 || NETSTANDARD2_1
-        var bytes = Encoding.UTF8.GetBytes(s.ToArray());
-        _writer.Write(bytes);
-#else
+#if NET5_0_OR_GREATER
         Encoding.UTF8.GetBytes(s, _writer);
+#else
+        _writer.Write(Encoding.UTF8.GetBytes(s.ToArray()));
 #endif
     }
 
@@ -296,7 +294,7 @@ public class ExcelSerializerWriter : IDisposable
     }
 #endif
 
-#if !NETSTANDARD2_0
+#if NETSTANDARD2_1_OR_GREATER
     [DoesNotReturn]
 #endif
     static void ThrowReachedMaxDepth(int depth)

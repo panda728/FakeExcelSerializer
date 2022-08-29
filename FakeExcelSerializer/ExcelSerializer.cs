@@ -176,7 +176,7 @@ public static class ExcelSerializer
         if (serializer != null)
         {
 
-#if NET6_0_OR_GREATER
+#if NET5_0_OR_GREATER
             if (rows is T[] arr)
                 WriteRowsSpan(arr.AsSpan(), ref stream, ref writer, serializer, options);
             else if (rows is List<T> list)
@@ -286,11 +286,10 @@ public static class ExcelSerializer
     {
         if (s == null)
             return;
-#if NETSTANDARD2_0 || NETSTANDARD2_1
-        var bytes = Encoding.UTF8.GetBytes(s);
-        writer.Write(bytes);
-#else
+#if NET5_0_OR_GREATER
         Encoding.UTF8.GetBytes(s.AsSpan(), writer);
+#else
+        writer.Write(Encoding.UTF8.GetBytes(s));
 #endif
     }
 }
