@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 
 namespace FakeExcelSerializer;
@@ -273,7 +274,7 @@ public static class ExcelSerializer
         foreach (var s in writer.SharedStrings.Keys)
         {
             buffer.Write(_siStart);
-            WriteUtf8Bytes(s, buffer);
+            WriteUtf8Bytes(SecurityElement.Escape(s), buffer);
             buffer.Write(_siEnd);
             buffer.CopyTo(stream);
         }
@@ -281,8 +282,10 @@ public static class ExcelSerializer
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static void WriteUtf8Bytes(string s, ArrayPoolBufferWriter writer)
+    static void WriteUtf8Bytes(string? s, ArrayPoolBufferWriter writer)
     {
+        if (s == null)
+            return;
 #if NETSTANDARD2_0 || NETSTANDARD2_1
         var bytes = Encoding.UTF8.GetBytes(s);
         writer.Write(bytes);

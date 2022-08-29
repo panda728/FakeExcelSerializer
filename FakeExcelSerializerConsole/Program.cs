@@ -42,7 +42,8 @@ var testUsers = new Faker<User>()
     .RuleFor(u => u.FullName, (f, u) => u.FirstName + " " + u.LastName)
     .RuleFor(u => u.Orders, f => testOrders.Generate(3).ToList())
     .RuleFor(o => o.Value, f => f.Random.Double(-1000, 1000))
-    .RuleFor(o => o.Char, f => (char)f.Random.Int(65, 65 + 26));
+    .RuleFor(o => o.Char, f => (char)f.Random.Int(65, 65 + 26))
+    .RuleFor(o => o.Escape, f => "</>\"'&");
 
 var Users = testUsers.Generate(100000);
 
@@ -58,7 +59,7 @@ var newConfig = ExcelSerializerOptions.Default with
         new[] { new BoolZeroOneSerializer() },
         new[] { ExcelSerializerProvider.Default }),
     HasHeaderRecord = true,
-    HeaderTitles = new string[] { "Id", "FName", "LName", "Name", "UserID", "Email", "Key", "Guid", "Flag", "Profile", "CartGuid", "TEL", "UnixTime", "Create Time", "Date", "Time", "TimeSpan", "DateTimeOffset", "Fallback", "Uri", "Gender", "OrderNumber1", "Item1", "Qty1", "Lot1", "OrderNumber2", "Item2", "Qty", "Lot2", "OrderNumber3", "Item3", "Qty3", "Lot3", "Value", "Char" },
+    HeaderTitles = new string[] { "Id", "FName", "LName", "Name", "UserID", "Email", "Key", "Guid", "Flag", "Profile", "CartGuid", "TEL", "UnixTime", "Create Time", "Date", "Time", "TimeSpan", "DateTimeOffset", "Fallback", "Uri", "Gender", "OrderNumber1", "Item1", "Qty1", "Lot1", "OrderNumber2", "Item2", "Qty", "Lot2", "OrderNumber3", "Item3", "Qty3", "Lot3", "Value", "Char", "Escape" },
     AutoFitColumns = true,
 };
 
@@ -139,5 +140,6 @@ public class User
     public List<Order> Orders { get; set; }
     public double Value { get; set; }
     public char Char { get; set; }
+    public string Escape { get; set; }
 }
 #pragma warning restore CS8618 // null 非許容のフィールドには、コンストラクターの終了時に null 以外の値が入っていなければなりません。Null 許容として宣言することをご検討ください。

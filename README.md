@@ -2,14 +2,14 @@
 Convert object to Excel file (.xlsx) [Open XML SpreadsheetML File Format]
 
 ## Getting Started
-Supporting platform is .NET 6.
+Supporting platform is .NET Standard 2.0, 2.1, .NET 5, .NET 6.
 
 ~~~
 PM> Install-Package FakeExcelSerializer
 ~~~
 
 ## Usage
-You can use `ExcelSerializer.ToFile`.
+You can use `ExcelSerializer.ToFile` to create .xlxs file.
 
 ~~~
 ExcelSerializer.ToFile(Users, "test.xlsx", ExcelSerializerOptions.Default);
@@ -85,14 +85,16 @@ The following page provides information on how to return to OpenOfficeXml.
 
 　https://gist.github.com/iso2022jp/721df3095f4df512bfe2327503ea1119
 
-　https://docs.microsoft.com/en-us/openspecs/office_standards/ms-xlsx/2c5dee00-eff2-4b22-92b6-0738acd4475## Benckma
-## Sample Extensions
+　https://docs.microsoft.com/en-us/openspecs/office_standards/ms-xlsx/2c5dee00-eff2-4b22-92b6-0738acd4475e
+ 
+## Extensions Sample
+
 WindowsForm's DataGridView to .xlsx
 
 https://github.com/panda728/DataGridViewDump
 
 ## Link
-CSV-like File output version
+CSV File output version
 　https://github.com/panda728/FakeCsvSerializer
 
 ## License
