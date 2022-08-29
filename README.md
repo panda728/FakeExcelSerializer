@@ -94,7 +94,7 @@ WindowsForm's DataGridView to .xlsx
 https://github.com/panda728/DataGridViewDump
 
 ## Link
-CSV-like File output version
+CSV File output version
 　https://github.com/panda728/FakeCsvSerializer
 
 ## License
