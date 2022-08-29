@@ -10,7 +10,7 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
     int _written;
     long _committed;
 
-    const int MinimumBufferSize = 256;
+    const int MinimumBufferSize = 32;
 
     public ArrayPoolBufferWriter(int initialCapacity = MinimumBufferSize)
     {
