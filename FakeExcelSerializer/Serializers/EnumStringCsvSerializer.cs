@@ -12,6 +12,9 @@ public sealed class EnumStringExcelSerializer<T> : IExcelSerializer<T>
     static readonly ConcurrentDictionary<T, string> stringCache = new();
     static readonly Func<T, string> toStringFactory = EnumToString;
 
+    public void WriteTitle(ref ExcelSerializerWriter writer, T value, ExcelSerializerOptions options, string name = "")
+        => writer.Write(name);
+
     public void Serialize(ref ExcelSerializerWriter writer, T value, ExcelSerializerOptions options)
     {
         var str = stringCache.GetOrAdd(value, toStringFactory);
@@ -39,6 +42,9 @@ public sealed class EnumValueExcelSerializer<T> : IExcelSerializer<T>
 {
     static readonly ConcurrentDictionary<T, string> stringCache = new();
     static readonly Func<T, string> toStringFactory = EnumToString;
+
+    public void WriteTitle(ref ExcelSerializerWriter writer, T value, ExcelSerializerOptions options, string name = "")
+        => writer.Write(name);
 
     public void Serialize(ref ExcelSerializerWriter writer, T value, ExcelSerializerOptions options)
     {

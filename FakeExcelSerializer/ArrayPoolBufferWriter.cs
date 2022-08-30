@@ -10,7 +10,7 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
     int _written;
     long _committed;
 
-    const int MinimumBufferSize = 256;
+    const int MinimumBufferSize = 32;
 
     public ArrayPoolBufferWriter(int initialCapacity = MinimumBufferSize)
     {
@@ -205,25 +205,25 @@ public class ArrayPoolBufferWriter : IBufferWriter<byte>, IDisposable
         }
     }
 
-#if !NETSTANDARD2_0
+#if NETSTANDARD2_1_OR_GREATER
     [DoesNotReturn]
 #endif
     static void ThrowArgumentNullException(string name)
         => throw new ArgumentNullException(name);
 
-#if !NETSTANDARD2_0
+#if NETSTANDARD2_1_OR_GREATER
     [DoesNotReturn]
 #endif
     static void ThrowObjectDisposedException()
         => throw new ObjectDisposedException(nameof(ArrayPoolBufferWriter));
 
-#if !NETSTANDARD2_0
+#if NETSTANDARD2_1_OR_GREATER
     [DoesNotReturn]
 #endif
     static void ThrowInvalidOperationException()
         => throw new InvalidOperationException("Cannot advance past the end of the buffer.");
 
-#if !NETSTANDARD2_0
+#if NETSTANDARD2_1_OR_GREATER
     [DoesNotReturn]
 #endif
     static void ThrowArgumentException(string name)

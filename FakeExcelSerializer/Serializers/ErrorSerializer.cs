@@ -11,6 +11,8 @@ public sealed class ErrorSerializer<T> : IExcelSerializer<T>
     {
         this.exception = ExceptionDispatchInfo.Capture(exception);
     }
+    public void WriteTitle(ref ExcelSerializerWriter writer, T value, ExcelSerializerOptions options, string name = "")
+    => writer.Write(name);
 
     public void Serialize(ref ExcelSerializerWriter writer, T value, ExcelSerializerOptions options)
     {

@@ -7,10 +7,11 @@ namespace FakeExcelSerializer.Serializers;
 
 internal sealed class CompiledObjectGraphExcelSerializer<T> : IExcelSerializer<T>
 {
+    delegate void WriteTitleMethod(ref ExcelSerializerWriter writer, IExcelSerializer?[]? alternateSerializers, T value, ExcelSerializerOptions options);
     delegate void SerializeMethod(ref ExcelSerializerWriter writer, IExcelSerializer?[]? alternateSerializers, T value, ExcelSerializerOptions options);
 
-    static readonly string[] names;
     static readonly IExcelSerializer?[]? alternateSerializers;
+    static readonly WriteTitleMethod writeTitle;
     static readonly SerializeMethod serialize;
     static readonly bool isReferenceType;
 
@@ -27,15 +28,20 @@ internal sealed class CompiledObjectGraphExcelSerializer<T> : IExcelSerializer<T
             .ThenBy(x => x.Name)
             .ToArray();
 
-        names = members.Select(x => x.Name).ToArray();
         if (members.Any(x => x.ExcelSerializer != null))
         {
             alternateSerializers = members.Select(x => x.ExcelSerializer).ToArray();
         }
+        writeTitle = CompileTitleWriter(typeof(T), members);
         serialize = CompileSerializer(typeof(T), members);
     }
 
-    public static string[] Names => names;
+    public void WriteTitle(ref ExcelSerializerWriter writer, T value, ExcelSerializerOptions options, string name = "")
+    {
+        writer.EnterAndValidate();
+        writeTitle(ref writer, alternateSerializers, value, options);
+        writer.Exit();
+    }
 
     public void Serialize(ref ExcelSerializerWriter writer, T value, ExcelSerializerOptions options)
     {
@@ -53,15 +59,51 @@ internal sealed class CompiledObjectGraphExcelSerializer<T> : IExcelSerializer<T
         writer.Exit();
     }
 
+    static WriteTitleMethod CompileTitleWriter(Type valueType, SerializableMemberInfo[] memberInfos)
+    {
+        // foreach(members)
+        //     options.GetRequiredSerializer<T>() || ((IExcelSerialzier<T>)alternateSerializers[0] .WriteTitle(writer, value.Foo, options, propertyName)
+        var argWriterRef = Expression.Parameter(typeof(ExcelSerializerWriter).MakeByRefType());
+        var argAlternateSerializers = Expression.Parameter(typeof(IExcelSerializer[]));
+        var argValue = Expression.Parameter(valueType);
+        var argOptions = Expression.Parameter(typeof(ExcelSerializerOptions));
+        var foreachBodies = new List<Expression>();
+
+        var i = 0;
+        foreach (var memberInfo in memberInfos)
+        {
+            Expression serializer = memberInfo.ExcelSerializer == null
+                ? Expression.Call(argOptions, ReflectionInfos.ExcelSerializerOptions_GetRequiredSerializer(memberInfo.MemberType))
+                : Expression.Convert(
+                    Expression.ArrayIndex(argAlternateSerializers, Expression.Constant(i, typeof(int))),
+                    typeof(IExcelSerializer<>).MakeGenericType(memberInfo.MemberType)
+                );
+
+            var callWriteMember = Expression.Call(
+                serializer,
+                ReflectionInfos.IExcelSerializer_WriteTitle(memberInfo.MemberType),
+                argWriterRef,
+                memberInfo.GetMemberExpression(argValue),
+                argOptions,
+                Expression.Constant(memberInfo.Name)
+            );
+
+            foreachBodies.Add(callWriteMember);
+            i++;
+        }
+
+        var body = Expression.Block(foreachBodies);
+        var lambda = Expression.Lambda<WriteTitleMethod>(body, argWriterRef, argAlternateSerializers, argValue, argOptions);
+        return lambda.Compile();
+    }
+
     static SerializeMethod CompileSerializer(Type valueType, SerializableMemberInfo[] memberInfos)
     {
-        // SerializeMethod(ref ExcelSerializerWriter writer, IExcelSerializer[]? alternateSerializers, T value, ExcelSerializerOptions options)
         // foreach(members)
         //   if (value.Foo != null) // reference type || nullable type
         //     options.GetRequiredSerializer<T>() || ((IExcelSerialzier<T>)alternateSerializers[0] .Serialize(writer, value.Foo, options)
         //   else
         //     writer.WriteEmpty();
-
         var argWriterRef = Expression.Parameter(typeof(ExcelSerializerWriter).MakeByRefType());
         var argAlternateSerializers = Expression.Parameter(typeof(IExcelSerializer[]));
         var argValue = Expression.Parameter(valueType);
@@ -92,7 +134,7 @@ internal sealed class CompiledObjectGraphExcelSerializer<T> : IExcelSerializer<T
                 var ifBody = Expression.IfThenElse(
                     Expression.NotEqual(memberInfo.GetMemberExpression(argValue), nullExpr),
                     callSerializer,
-                    Expression.Call(argWriterRef, ReflectionInfos.CsvWriter_Empty)
+                    Expression.Call(argWriterRef, ReflectionInfos.Writer_Empty)
                 );
                 foreachBodies.Add(ifBody);
             }
@@ -106,13 +148,15 @@ internal sealed class CompiledObjectGraphExcelSerializer<T> : IExcelSerializer<T
         var body = Expression.Block(foreachBodies);
         var lambda = Expression.Lambda<SerializeMethod>(body, argWriterRef, argAlternateSerializers, argValue, argOptions);
         return lambda.Compile();
+
     }
 
     internal static class ReflectionInfos
     {
-        internal static MethodInfo CsvWriter_Empty { get; } = typeof(ExcelSerializerWriter).GetMethod("WriteEmpty")!;
+        internal static MethodInfo Writer_Empty { get; } = typeof(ExcelSerializerWriter).GetMethod("WriteEmpty")!;
         internal static MethodInfo ExcelSerializerOptions_GetRequiredSerializer(Type type) => typeof(ExcelSerializerOptions).GetMethod("GetRequiredSerializer", 1, Type.EmptyTypes)!.MakeGenericMethod(type);
         internal static MethodInfo IExcelSerializer_Serialize(Type type) => typeof(IExcelSerializer<>).MakeGenericType(type).GetMethod("Serialize")!;
+        internal static MethodInfo IExcelSerializer_WriteTitle(Type type) => typeof(IExcelSerializer<>).MakeGenericType(type).GetMethod("WriteTitle")!;
     }
 }
 
