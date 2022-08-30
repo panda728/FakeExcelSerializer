@@ -6,7 +6,14 @@ public sealed class NullableExcelSerializer<T> : IExcelSerializer<T?>
     where T : struct
 {
     public void WriteTitle(ref ExcelSerializerWriter writer, T? value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+    {
+        if (value == null)
+        {
+            writer.WriteEmpty();
+            return;
+        }
+        options.GetRequiredSerializer<T>().WriteTitle(ref writer, value.Value, options, name);
+    }
 
     public void Serialize(ref ExcelSerializerWriter writer, T? value, ExcelSerializerOptions options)
     {
