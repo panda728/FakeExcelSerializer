@@ -9,7 +9,7 @@ PM> Install-Package FakeExcelSerializer
 ~~~
 
 ## Usage
-You can use `ExcelSerializer.ToFile` to create .xlxs file.
+You can use `ExcelSerializer.ToFile` to create .xlsx file.
 
 ~~~
 ExcelSerializer.ToFile(Users, "test.xlsx", ExcelSerializerOptions.Default);
