@@ -3,6 +3,17 @@
 public sealed class EnumerableExcelSerializer<TCollection, TElement> : IExcelSerializer<TCollection>
     where TCollection : IEnumerable<TElement>
 {
+    public void WriteTitle(ref ExcelSerializerWriter writer, TCollection value, ExcelSerializerOptions options, string name = "")
+    {
+        writer.EnterAndValidate();
+        var serializer = options.GetRequiredSerializer<TElement>();
+        foreach (var item in value)
+        {
+            serializer.WriteTitle(ref writer, item, options);
+        }
+        writer.Exit();
+    }
+
     public void Serialize(ref ExcelSerializerWriter writer, TCollection value, ExcelSerializerOptions options)
     {
         if (value == null)
@@ -24,6 +35,20 @@ public sealed class EnumerableExcelSerializer<TCollection, TElement> : IExcelSer
 public sealed class DictionaryExcelSerializer<TDictionary, TKey, TValue> : IExcelSerializer<TDictionary>
     where TDictionary : IDictionary<TKey, TValue>
 {
+    public void WriteTitle(ref ExcelSerializerWriter writer, TDictionary value, ExcelSerializerOptions options, string name = "")
+    {
+
+        writer.EnterAndValidate();
+        var keySerializer = options.GetRequiredSerializer<TKey>();
+        var valueSerializer = options.GetRequiredSerializer<TValue>();
+        foreach (var item in value)
+        {
+            keySerializer.WriteTitle(ref writer, item.Key, options, "Key");
+            valueSerializer.WriteTitle(ref writer, item.Value, options, "Value");
+        }
+        writer.Exit();
+    }
+
     public void Serialize(ref ExcelSerializerWriter writer, TDictionary value, ExcelSerializerOptions options)
     {
         if (value == null)
@@ -54,6 +79,19 @@ public sealed class DictionaryExcelSerializer<TDictionary, TKey, TValue> : IExce
 public sealed class EnumerableKeyValuePairExcelSerializer<TCollection, TKey, TValue> : IExcelSerializer<TCollection>
     where TCollection : IEnumerable<KeyValuePair<TKey, TValue>>
 {
+    public void WriteTitle(ref ExcelSerializerWriter writer, TCollection value, ExcelSerializerOptions options, string name = "")
+    {
+        var keySerializer = options.GetRequiredSerializer<TKey>();
+        var valueSerializer = options.GetRequiredSerializer<TValue>();
+        writer.EnterAndValidate();
+        foreach (var item in value)
+        {
+            keySerializer.WriteTitle(ref writer, item.Key, options, "Key");
+            valueSerializer.WriteTitle(ref writer, item.Value, options, "Value");
+        }
+        writer.Exit();
+    }
+
     public void Serialize(ref ExcelSerializerWriter writer, TCollection value, ExcelSerializerOptions options)
     {
         if (value == null)

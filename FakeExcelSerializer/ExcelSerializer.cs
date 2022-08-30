@@ -89,6 +89,9 @@ public static class ExcelSerializer
 
     public static void ToFile<T>(IEnumerable<T> rows, string fileName, ExcelSerializerOptions options)
     {
+        if (rows == null || !rows.Any())
+            return;
+
         var workPathRoot = Path.Combine(options.WorkPath, Guid.NewGuid().ToString());
         if (!Directory.Exists(workPathRoot))
             Directory.CreateDirectory(workPathRoot);
@@ -163,18 +166,24 @@ public static class ExcelSerializer
 
         stream.Write(_dataStart, 0, _dataStart.Length);
 
-        if (options.HasHeaderRecord && options.HeaderTitles != null && options.HeaderTitles.Any())
-        {
-            writer.WriteRaw(_rowStart);
-            foreach (var t in options.HeaderTitles)
-                writer.Write(t);
-            writer.WriteRaw(_rowEnd);
-            writer.CopyTo(stream);
-        }
-
         var serializer = options.GetSerializer<T>();
         if (serializer != null)
         {
+            if (options.HasHeaderRecord)
+            {
+                writer.WriteRaw(_rowStart);
+                if (options.HeaderTitles != null && options.HeaderTitles.Any())
+                {
+                    foreach (var t in options.HeaderTitles)
+                        writer.Write(t);
+                }
+                else
+                {
+                    serializer.WriteTitle(ref writer, rows.First(), options);
+                }
+                writer.WriteRaw(_rowEnd);
+                writer.CopyTo(stream);
+            }
 
 #if NET5_0_OR_GREATER
             if (rows is T[] arr)

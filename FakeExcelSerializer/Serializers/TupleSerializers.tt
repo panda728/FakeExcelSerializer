@@ -24,6 +24,8 @@ namespace FakeExcelSerializer.Serializers
         where TRest : notnull
 <# } #>
     {
+		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<<#= BuildTypeParameters(i) #>> value, ExcelSerializerOptions options, string name = "")
+            => writer.Write(name);
         public void Serialize(ref ExcelSerializerWriter writer, Tuple<<#= BuildTypeParameters(i) #>> value, ExcelSerializerOptions options)
         {
             if (value == null) {
@@ -45,6 +47,8 @@ namespace FakeExcelSerializer.Serializers
         where TRest : struct
 <# } #>
     {
+		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<<#= BuildTypeParameters(i) #>> value, ExcelSerializerOptions options, string name = "")
+            => writer.Write(name);
         public void Serialize(ref ExcelSerializerWriter writer, ValueTuple<<#= BuildTypeParameters(i) #>> value, ExcelSerializerOptions options)
         {
             writer.EnterAndValidate();

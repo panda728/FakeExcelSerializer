@@ -10,6 +10,9 @@ internal class ObjectFallbackExcelSerializer : IExcelSerializer<object>
     static readonly ConcurrentDictionary<Type, SerializeDelegate> nongenericSerializers = new();
     static readonly Func<Type, SerializeDelegate> factory = CompileSerializeDelegate;
 
+    public void WriteTitle(ref ExcelSerializerWriter writer, object value, ExcelSerializerOptions options, string name = "")
+        => writer.Write(name);
+
     public void Serialize(ref ExcelSerializerWriter writer, object value, ExcelSerializerOptions options)
     {
         if (value == null)

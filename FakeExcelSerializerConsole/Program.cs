@@ -59,13 +59,13 @@ var newConfig = ExcelSerializerOptions.Default with
         new[] { new BoolZeroOneSerializer() },
         new[] { ExcelSerializerProvider.Default }),
     HasHeaderRecord = true,
-    HeaderTitles = new string[] { "Id", "FName", "LName", "Name", "UserID", "Email", "Key", "Guid", "Flag", "Profile", "CartGuid", "TEL", "UnixTime", "Create Time", "Date", "Time", "TimeSpan", "DateTimeOffset", "Fallback", "Uri", "Gender", "OrderNumber1", "Item1", "Qty1", "Lot1", "OrderNumber2", "Item2", "Qty", "Lot2", "OrderNumber3", "Item3", "Qty3", "Lot3", "Value", "Char", "Escape" },
     AutoFitColumns = true,
 };
 
 var fileName = Path.Combine(Environment.CurrentDirectory, "test.xlsx");
 if (File.Exists(fileName))
     File.Delete(fileName);
+
 ExcelSerializer.ToFile(Users, fileName, newConfig);
 
 sw.Stop();
@@ -81,6 +81,9 @@ Console.ReadLine();
 
 public class BoolZeroOneSerializer : IExcelSerializer<bool>
 {
+    public void WriteTitle(ref ExcelSerializerWriter writer, bool value, ExcelSerializerOptions options, string name = "")
+        => writer.Write(name);
+
     public void Serialize(ref ExcelSerializerWriter writer, bool value, ExcelSerializerOptions options)
     {
         // true => 0, false => 1
@@ -90,6 +93,9 @@ public class BoolZeroOneSerializer : IExcelSerializer<bool>
 
 public class UnixSecondsSerializer : IExcelSerializer<DateTime>
 {
+    public void WriteTitle(ref ExcelSerializerWriter writer, DateTime value, ExcelSerializerOptions options, string name = "")
+        => writer.Write(name);
+
     public void Serialize(ref ExcelSerializerWriter writer, DateTime value, ExcelSerializerOptions options)
     {
         writer.WritePrimitive(((DateTimeOffset)(value)).ToUnixTimeSeconds());
