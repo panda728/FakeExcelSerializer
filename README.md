@@ -9,7 +9,7 @@ PM> Install-Package FakeExcelSerializer
 ~~~
 
 ## Usage
-You can use `ExcelSerializer.ToFile` to create .xlxs file.
+You can use `ExcelSerializer.ToFile` to create .xlsx file.
 
 ~~~
 ExcelSerializer.ToFile(Users, "test.xlsx", ExcelSerializerOptions.Default);
@@ -22,26 +22,26 @@ Folder creation permissions are required since a working folder will be used.
 ## Benchmark
 N = 100 lines.
 
-|              Method |   N |         Mean |      Error |     StdDev | Ratio |      Gen 0 |      Gen 1 |     Gen 2 |  Allocated |
-|-------------------- |---- |-------------:|-----------:|-----------:|------:|-----------:|-----------:|----------:|-----------:|
-|           ClosedXml |   1 |    36.078 ms |  0.3324 ms |  0.3109 ms |  1.00 |   857.1429 |   357.1429 |         - |   5,734 KB |
-| FakeExcelSerializer |   1 |     4.587 ms |  0.0397 ms |  0.0332 ms |  0.13 |    15.6250 |     7.8125 |         - |     127 KB |
-|                     |     |              |            |            |       |            |            |           |            |
-|           ClosedXml |  10 |   343.416 ms |  5.7000 ms |  4.7598 ms |  1.00 |  8000.0000 |  1000.0000 |         - |  52,661 KB |
-| FakeExcelSerializer |  10 |     9.067 ms |  0.0850 ms |  0.0709 ms |  0.03 |    93.7500 |    31.2500 |         - |     661 KB |
-|                     |     |              |            |            |       |            |            |           |            |
-|           ClosedXml | 100 | 3,663.531 ms | 23.3744 ms | 20.7208 ms |  1.00 | 81000.0000 | 22000.0000 | 5000.0000 | 513,936 KB |
-| FakeExcelSerializer | 100 |    47.989 ms |  0.9378 ms |  0.8773 ms |  0.01 |   909.0909 |    90.9091 |         - |   6,005 KB |
+|              Method |   N |        Mean |     Error |    StdDev | Ratio |      Gen 0 |      Gen 1 |     Gen 2 |  Allocated |
+|-------------------- |---- |------------:|----------:|----------:|------:|-----------:|-----------:|----------:|-----------:|
+|           ClosedXml |   1 |    73.00 ms |  1.450 ms |  4.091 ms |  1.00 |          - |          - |         - |   5,738 KB |
+| FakeExcelSerializer |   1 |    18.88 ms |  0.362 ms |  0.417 ms |  0.24 |          - |          - |         - |     126 KB |
+|                     |     |             |           |           |       |            |            |           |            |
+|           ClosedXml |  10 |   630.72 ms |  4.783 ms |  3.994 ms |  1.00 |  9000.0000 |  2000.0000 |         - |  52,663 KB |
+| FakeExcelSerializer |  10 |    25.86 ms |  0.490 ms |  0.619 ms |  0.04 |   156.2500 |    31.2500 |         - |     661 KB |
+|                     |     |             |           |           |       |            |            |           |            |
+|           ClosedXml | 100 | 6,620.75 ms | 57.586 ms | 48.087 ms |  1.00 | 91000.0000 | 22000.0000 | 5000.0000 | 513,948 KB |
+| FakeExcelSerializer | 100 |    77.63 ms |  1.491 ms |  1.395 ms |  0.01 |  1428.5714 |   142.8571 |         - |   6,005 KB |
 
 ## Examples
-
-If you pass an object, it will be converted to an Excel file.
+- If you pass an object, it will be converted to an Excel file.
 ~~~
 ExcelSerializer.ToFile(new string[] { "test", "test2" }, @"c:\test\test.xlsx", ExcelSerializerOptions.Default);
 ~~~
 ![image](https://user-images.githubusercontent.com/16958552/185727609-79b574e8-b40c-46dc-83c9-74b078a1f44a.png)
+---
 
-Passing a class expands the property into a column.
+- Passing a class expands the property into a column.
 ~~~
 public class Portal
 {
@@ -59,9 +59,36 @@ var potals = new Portal[] {
 ExcelSerializer.ToFile(potals, @"c:\test\potals.xlsx", ExcelSerializerOptions.Default);
 ~~~
 ![image](https://user-images.githubusercontent.com/16958552/185727657-3e41dea7-1af4-4a52-99bd-1457f895b564.png)
+---
 
+- By setting attributes on the class, you can specify the name of the title or change the order of the columns.
+~~~
+public class Portal
+{
+    [DataMember(Name = "Name Ex", Order = 3)]
+    public string Name { get; set; }
+    [DataMember(Name = "Owner Ex", Order = 1)]
+    public string Owner { get; set; }
+    [DataMember(Name = "Level Ex", Order = 2)]
+    public int Level { get; set; }
+}
 
-Options can be set to display a title line and automatically adjust column widths.
+var potals = new Portal[] {
+    new Portal { Name = "Portal1", Owner = "panda728", Level = 8 },
+    new Portal { Name = "Portal2", Owner = "panda728", Level = 1 },
+    new Portal { Name = "Portal3", Owner = "panda728", Level = 2 },
+};
+
+var newConfig = ExcelSerializerOptions.Default with
+{
+    HasHeaderRecord = true,
+};
+ExcelSerializer.ToFile(potals, @"c:\test\potalsEx.xlsx", newConfig);
+~~~
+![image](https://user-images.githubusercontent.com/16958552/187447183-1c0af135-8407-4c79-be8d-0b4875973a79.png)
+---
+
+- Options can be set to display a title line and automatically adjust column widths.
 ~~~
 var newConfig = ExcelSerializerOptions.Default with
 {
@@ -73,7 +100,6 @@ var newConfig = ExcelSerializerOptions.Default with
 ExcelSerializer.ToFile(potals, @"c:\test\potalsOp.xlsx", newConfig);
 ~~~
 ![image](https://user-images.githubusercontent.com/16958552/185727708-18201283-bb0b-46ba-a413-dbe34c20f3a3.png)
-
 
 ## Note
 
