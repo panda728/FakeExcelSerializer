@@ -62,7 +62,7 @@ ExcelSerializer.ToFile(potals, @"c:\test\potals.xlsx", ExcelSerializerOptions.De
 
 #### 3. By setting attributes on the class, you can specify the name of the title or change the order of the columns.
 ~~~
-public class PortalEx
+public class Portal
 {
     [DataMember(Name = "Name Ex", Order = 3)]
     public string Name { get; set; }
@@ -72,17 +72,17 @@ public class PortalEx
     public int Level { get; set; }
 }
 
-var potalsEx = new PortalEx[] {
-    new PortalEx { Name = "Portal1", Owner = "panda728", Level = 8 },
-    new PortalEx { Name = "Portal2", Owner = "panda728", Level = 1 },
-    new PortalEx { Name = "Portal3", Owner = "panda728", Level = 2 },
+var potals = new Portal[] {
+    new Portal { Name = "Portal1", Owner = "panda728", Level = 8 },
+    new Portal { Name = "Portal2", Owner = "panda728", Level = 1 },
+    new Portal { Name = "Portal3", Owner = "panda728", Level = 2 },
 };
 
-var newConfigEx = ExcelSerializerOptions.Default with
+var newConfig = ExcelSerializerOptions.Default with
 {
     HasHeaderRecord = true,
 };
-ExcelSerializer.ToFile(potalsEx, @"c:\test\potalsEx.xlsx", newConfigEx);
+ExcelSerializer.ToFile(potals, @"c:\test\potalsEx.xlsx", newConfig);
 ~~~
 ![image](https://user-images.githubusercontent.com/16958552/187447183-1c0af135-8407-4c79-be8d-0b4875973a79.png)
 
