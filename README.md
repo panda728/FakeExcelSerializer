@@ -35,13 +35,13 @@ N = 100 lines.
 
 ## Examples
 
-If you pass an object, it will be converted to an Excel file.
+#### 1. If you pass an object, it will be converted to an Excel file.
 ~~~
 ExcelSerializer.ToFile(new string[] { "test", "test2" }, @"c:\test\test.xlsx", ExcelSerializerOptions.Default);
 ~~~
 ![image](https://user-images.githubusercontent.com/16958552/185727609-79b574e8-b40c-46dc-83c9-74b078a1f44a.png)
 
-Passing a class expands the property into a column.
+#### 2. Passing a class expands the property into a column.
 ~~~
 public class Portal
 {
@@ -60,7 +60,7 @@ ExcelSerializer.ToFile(potals, @"c:\test\potals.xlsx", ExcelSerializerOptions.De
 ~~~
 ![image](https://user-images.githubusercontent.com/16958552/185727657-3e41dea7-1af4-4a52-99bd-1457f895b564.png)
 
-By setting attributes on the class, you can specify the name of the title or change the order of the columns.
+#### 3. By setting attributes on the class, you can specify the name of the title or change the order of the columns.
 ~~~
 public class PortalEx
 {
@@ -87,7 +87,7 @@ ExcelSerializer.ToFile(potalsEx, @"c:\test\potalsEx.xlsx", newConfigEx);
 ![image](https://user-images.githubusercontent.com/16958552/187447183-1c0af135-8407-4c79-be8d-0b4875973a79.png)
 
 
-Options can be set to display a title line and automatically adjust column widths.
+#### 4. Options can be set to display a title line and automatically adjust column widths.
 ~~~
 var newConfig = ExcelSerializerOptions.Default with
 {
@@ -99,7 +99,6 @@ var newConfig = ExcelSerializerOptions.Default with
 ExcelSerializer.ToFile(potals, @"c:\test\potalsOp.xlsx", newConfig);
 ~~~
 ![image](https://user-images.githubusercontent.com/16958552/185727708-18201283-bb0b-46ba-a413-dbe34c20f3a3.png)
-
 
 ## Note
 
