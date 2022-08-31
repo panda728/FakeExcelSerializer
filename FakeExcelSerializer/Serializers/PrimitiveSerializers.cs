@@ -6,7 +6,7 @@ namespace FakeExcelSerializer.Serializers
 {
     public sealed class BooleanExcelSerializer : IExcelSerializer<Boolean>
     {        
-		public void WriteTitle(ref ExcelSerializerWriter writer, Boolean value, ExcelSerializerOptions options, string name = "")
+		public void WriteTitle(ref ExcelSerializerWriter writer, Boolean value, ExcelSerializerOptions options, string name = "value")
             => writer.Write(name);
 
         public void Serialize(ref ExcelSerializerWriter writer, Boolean value, ExcelSerializerOptions options)
@@ -15,7 +15,7 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class ByteExcelSerializer : IExcelSerializer<Byte>
     {        
-		public void WriteTitle(ref ExcelSerializerWriter writer, Byte value, ExcelSerializerOptions options, string name = "")
+		public void WriteTitle(ref ExcelSerializerWriter writer, Byte value, ExcelSerializerOptions options, string name = "value")
             => writer.Write(name);
 
         public void Serialize(ref ExcelSerializerWriter writer, Byte value, ExcelSerializerOptions options)
@@ -24,7 +24,7 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class SByteExcelSerializer : IExcelSerializer<SByte>
     {        
-		public void WriteTitle(ref ExcelSerializerWriter writer, SByte value, ExcelSerializerOptions options, string name = "")
+		public void WriteTitle(ref ExcelSerializerWriter writer, SByte value, ExcelSerializerOptions options, string name = "value")
             => writer.Write(name);
 
         public void Serialize(ref ExcelSerializerWriter writer, SByte value, ExcelSerializerOptions options)
@@ -33,7 +33,7 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class DecimalExcelSerializer : IExcelSerializer<Decimal>
     {        
-		public void WriteTitle(ref ExcelSerializerWriter writer, Decimal value, ExcelSerializerOptions options, string name = "")
+		public void WriteTitle(ref ExcelSerializerWriter writer, Decimal value, ExcelSerializerOptions options, string name = "value")
             => writer.Write(name);
 
         public void Serialize(ref ExcelSerializerWriter writer, Decimal value, ExcelSerializerOptions options)
@@ -42,7 +42,7 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class DoubleExcelSerializer : IExcelSerializer<Double>
     {        
-		public void WriteTitle(ref ExcelSerializerWriter writer, Double value, ExcelSerializerOptions options, string name = "")
+		public void WriteTitle(ref ExcelSerializerWriter writer, Double value, ExcelSerializerOptions options, string name = "value")
             => writer.Write(name);
 
         public void Serialize(ref ExcelSerializerWriter writer, Double value, ExcelSerializerOptions options)
@@ -51,7 +51,7 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class SingleExcelSerializer : IExcelSerializer<Single>
     {        
-		public void WriteTitle(ref ExcelSerializerWriter writer, Single value, ExcelSerializerOptions options, string name = "")
+		public void WriteTitle(ref ExcelSerializerWriter writer, Single value, ExcelSerializerOptions options, string name = "value")
             => writer.Write(name);
 
         public void Serialize(ref ExcelSerializerWriter writer, Single value, ExcelSerializerOptions options)
@@ -60,7 +60,7 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class Int32ExcelSerializer : IExcelSerializer<Int32>
     {        
-		public void WriteTitle(ref ExcelSerializerWriter writer, Int32 value, ExcelSerializerOptions options, string name = "")
+		public void WriteTitle(ref ExcelSerializerWriter writer, Int32 value, ExcelSerializerOptions options, string name = "value")
             => writer.Write(name);
 
         public void Serialize(ref ExcelSerializerWriter writer, Int32 value, ExcelSerializerOptions options)
@@ -69,7 +69,7 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class UInt32ExcelSerializer : IExcelSerializer<UInt32>
     {        
-		public void WriteTitle(ref ExcelSerializerWriter writer, UInt32 value, ExcelSerializerOptions options, string name = "")
+		public void WriteTitle(ref ExcelSerializerWriter writer, UInt32 value, ExcelSerializerOptions options, string name = "value")
             => writer.Write(name);
 
         public void Serialize(ref ExcelSerializerWriter writer, UInt32 value, ExcelSerializerOptions options)
@@ -78,7 +78,7 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class Int64ExcelSerializer : IExcelSerializer<Int64>
     {        
-		public void WriteTitle(ref ExcelSerializerWriter writer, Int64 value, ExcelSerializerOptions options, string name = "")
+		public void WriteTitle(ref ExcelSerializerWriter writer, Int64 value, ExcelSerializerOptions options, string name = "value")
             => writer.Write(name);
 
         public void Serialize(ref ExcelSerializerWriter writer, Int64 value, ExcelSerializerOptions options)
@@ -87,7 +87,7 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class UInt64ExcelSerializer : IExcelSerializer<UInt64>
     {        
-		public void WriteTitle(ref ExcelSerializerWriter writer, UInt64 value, ExcelSerializerOptions options, string name = "")
+		public void WriteTitle(ref ExcelSerializerWriter writer, UInt64 value, ExcelSerializerOptions options, string name = "value")
             => writer.Write(name);
 
         public void Serialize(ref ExcelSerializerWriter writer, UInt64 value, ExcelSerializerOptions options)
@@ -96,7 +96,7 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class Int16ExcelSerializer : IExcelSerializer<Int16>
     {        
-		public void WriteTitle(ref ExcelSerializerWriter writer, Int16 value, ExcelSerializerOptions options, string name = "")
+		public void WriteTitle(ref ExcelSerializerWriter writer, Int16 value, ExcelSerializerOptions options, string name = "value")
             => writer.Write(name);
 
         public void Serialize(ref ExcelSerializerWriter writer, Int16 value, ExcelSerializerOptions options)
@@ -105,7 +105,7 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class UInt16ExcelSerializer : IExcelSerializer<UInt16>
     {        
-		public void WriteTitle(ref ExcelSerializerWriter writer, UInt16 value, ExcelSerializerOptions options, string name = "")
+		public void WriteTitle(ref ExcelSerializerWriter writer, UInt16 value, ExcelSerializerOptions options, string name = "value")
             => writer.Write(name);
 
         public void Serialize(ref ExcelSerializerWriter writer, UInt16 value, ExcelSerializerOptions options)

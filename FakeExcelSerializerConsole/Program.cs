@@ -41,7 +41,7 @@ var testUsers = new Faker<User>()
     .RuleFor(u => u.CartId, f => f.Random.Guid())
     .RuleFor(u => u.FullName, (f, u) => u.FirstName + " " + u.LastName)
     .RuleFor(u => u.Orders, f => testOrders.Generate(3).ToList())
-    .RuleFor(o => o.Value, f => f.Random.Double(-1000, 1000))
+    .RuleFor(o => o.DoubleValue, f => f.Random.Double(-1000, 1000))
     .RuleFor(o => o.Char, f => (char)f.Random.Int(65, 65 + 26))
     .RuleFor(o => o.Escape, f => "</>\"'&");
 
@@ -53,7 +53,7 @@ sw.Restart();
 
 var newConfig = ExcelSerializerOptions.Default with
 {
-    CultureInfo = CultureInfo.InvariantCulture,
+    CultureInfo = CultureInfo.CurrentCulture,
     MaxDepth = 32,
     Provider = ExcelSerializerProvider.Create(
         new[] { new BoolZeroOneSerializer() },
@@ -82,7 +82,9 @@ Console.ReadLine();
 public class BoolZeroOneSerializer : IExcelSerializer<bool>
 {
     public void WriteTitle(ref ExcelSerializerWriter writer, bool value, ExcelSerializerOptions options, string name = "")
-        => writer.Write(name);
+    {
+        writer.Write(name);
+    }
 
     public void Serialize(ref ExcelSerializerWriter writer, bool value, ExcelSerializerOptions options)
     {
@@ -94,7 +96,9 @@ public class BoolZeroOneSerializer : IExcelSerializer<bool>
 public class UnixSecondsSerializer : IExcelSerializer<DateTime>
 {
     public void WriteTitle(ref ExcelSerializerWriter writer, DateTime value, ExcelSerializerOptions options, string name = "")
-        => writer.Write(name);
+    {
+        writer.Write(name);
+    }
 
     public void Serialize(ref ExcelSerializerWriter writer, DateTime value, ExcelSerializerOptions options)
     {
@@ -144,7 +148,7 @@ public class User
     public Bogus.DataSets.Name.Gender Gender { get; set; }
 
     public List<Order> Orders { get; set; }
-    public double Value { get; set; }
+    public double DoubleValue { get; set; }
     public char Char { get; set; }
     public string Escape { get; set; }
 }

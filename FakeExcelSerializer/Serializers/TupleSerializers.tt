@@ -24,8 +24,15 @@ namespace FakeExcelSerializer.Serializers
         where TRest : notnull
 <# } #>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<<#= BuildTypeParameters(i) #>> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<<#= BuildTypeParameters(i) #>> value, ExcelSerializerOptions options, string name = "value"){
+            writer.EnterAndValidate();
+<# for(var j = 1; j <= i; j++) { #>
+<# if(j != 1) { #>
+<# } #>
+            options.GetRequiredSerializer<<#= BuildTypeParameter(j) #>>().WriteTitle(ref writer, value.<#= BuildGetItemProperty(j) #>, options, $"{name}<#= $"{j}" #>");
+<# } #>
+            writer.Exit();
+        }
         public void Serialize(ref ExcelSerializerWriter writer, Tuple<<#= BuildTypeParameters(i) #>> value, ExcelSerializerOptions options)
         {
             if (value == null) {
@@ -47,8 +54,17 @@ namespace FakeExcelSerializer.Serializers
         where TRest : struct
 <# } #>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<<#= BuildTypeParameters(i) #>> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<<#= BuildTypeParameters(i) #>> value, ExcelSerializerOptions options, string name = "value"){
+        {
+            writer.EnterAndValidate();
+<# for(var j = 1; j <= i; j++) { #>
+<# if(j != 1) { #>
+<# } #>
+            options.GetRequiredSerializer<<#= BuildTypeParameter(j) #>>().WriteTitle(ref writer, value.<#= BuildGetItemProperty(j) #>, options, $"{name}<#= $"{j}" #>");
+<# } #>
+            writer.Exit();
+        }
+        }
         public void Serialize(ref ExcelSerializerWriter writer, ValueTuple<<#= BuildTypeParameters(i) #>> value, ExcelSerializerOptions options)
         {
             writer.EnterAndValidate();

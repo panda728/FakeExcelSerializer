@@ -36,7 +36,7 @@ internal sealed class CompiledObjectGraphExcelSerializer<T> : IExcelSerializer<T
         serialize = CompileSerializer(typeof(T), members);
     }
 
-    public void WriteTitle(ref ExcelSerializerWriter writer, T value, ExcelSerializerOptions options, string name = "")
+    public void WriteTitle(ref ExcelSerializerWriter writer, T value, ExcelSerializerOptions options, string name = "value")
     {
         writer.EnterAndValidate();
         writeTitle(ref writer, alternateSerializers, value, options);

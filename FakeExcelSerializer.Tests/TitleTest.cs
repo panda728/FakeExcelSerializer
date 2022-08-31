@@ -48,6 +48,33 @@ namespace FakeExcelSerializer.Tests
             }
         }
 
+        void RunTest<T>(T value, string value1ShouldBe, string columnXmlShouldBe, ExcelSerializerOptions option)
+        {
+            var serializer = option.GetSerializer<T>();
+            Assert.NotNull(serializer);
+            if (serializer == null) return;
+
+            var writer = new ExcelSerializerWriter(option);
+            try
+            {
+                serializer.WriteTitle(ref writer, value, option);
+                Assert.NotEmpty(writer.SharedStrings);
+                var columnXml = writer.ToString();
+                var sharedString1 = writer.SharedStrings.First().Key;
+
+                columnXml.Should().Be(columnXmlShouldBe);
+                sharedString1.Should().Be(value1ShouldBe);
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                writer.Dispose();
+            }
+        }
+
         [Fact]
         public void Serializer_WriteTitle()
         {
@@ -70,6 +97,30 @@ namespace FakeExcelSerializer.Tests
                 "Name Ex",
                 "<c t=\"s\"><v>0</v></c><c t=\"s\"><v>1</v></c><c t=\"s\"><v>2</v></c><c t=\"s\"><v>0</v></c><c t=\"s\"><v>1</v></c><c t=\"s\"><v>2</v></c><c t=\"s\"><v>0</v></c><c t=\"s\"><v>1</v></c><c t=\"s\"><v>2</v></c>",
                 option);
+        }
+
+        [Fact]
+        public void Serializer_ObjectFallback()
+        {
+            var value = (object)"key1";
+            RunTest(value, "value",
+                "<c t=\"s\"><v>0</v></c>",
+                ExcelSerializerOptions.Default);
+        }
+
+        [Fact]
+        public void Serializer_tuple2()
+        {
+            var t = Tuple.Create(1, 2);
+            RunTest(t, "value1", "<c t=\"s\"><v>0</v></c><c t=\"s\"><v>1</v></c>", ExcelSerializerOptions.Default);
+        }
+        [Fact]
+        public void Serializer_IDictionary()
+        {
+            var dic = new Dictionary<string, int> { { "key1", 1 }, { "key2", 2 } };
+            RunTest(dic, "key",
+                "<c t=\"s\"><v>0</v></c><c t=\"s\"><v>1</v></c><c t=\"s\"><v>0</v></c><c t=\"s\"><v>1</v></c>",
+                ExcelSerializerOptions.Default);
         }
     }
 
