@@ -14,12 +14,12 @@ internal class ObjectFallbackExcelSerializer : IExcelSerializer<object>
     static readonly ConcurrentDictionary<Type, SerializeDelegate> nongenericSerializers = new();
     static readonly Func<Type, SerializeDelegate> factory = CompileSerializeDelegate;
 
-    public void WriteTitle(ref ExcelSerializerWriter writer, object value, ExcelSerializerOptions options, string name = "")
+    public void WriteTitle(ref ExcelSerializerWriter writer, object value, ExcelSerializerOptions options, string name = "value")
     {
         var type = value.GetType();
         if (type == typeof(object))
         {
-            writer.WriteEmpty();
+            writer.Write(name);
             return;
         }
 
@@ -55,7 +55,6 @@ internal class ObjectFallbackExcelSerializer : IExcelSerializer<object>
 
         var getRequiredSerializer = typeof(ExcelSerializerOptions).GetMethod("GetRequiredSerializer", 1, Type.EmptyTypes)!.MakeGenericMethod(type);
         var writeTitle = typeof(IExcelSerializer<>).MakeGenericType(type).GetMethod("WriteTitle")!;
-        var argEmpty = Expression.Constant("");
         var body = Expression.Call(
             Expression.Call(options, getRequiredSerializer),
             writeTitle,

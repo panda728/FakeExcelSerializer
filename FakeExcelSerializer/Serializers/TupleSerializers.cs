@@ -6,8 +6,11 @@ namespace FakeExcelSerializer.Serializers
 {
     public sealed class TupleExcelSerializer<T1> : IExcelSerializer<Tuple<T1>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1> value, ExcelSerializerOptions options, string name = "value"){
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            writer.Exit();
+        }
         public void Serialize(ref ExcelSerializerWriter writer, Tuple<T1> value, ExcelSerializerOptions options)
         {
             if (value == null) {
@@ -22,8 +25,13 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class ValueTupleExcelSerializer<T1> : IExcelSerializer<ValueTuple<T1>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1> value, ExcelSerializerOptions options, string name = "value"){
+        {
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            writer.Exit();
+        }
+        }
         public void Serialize(ref ExcelSerializerWriter writer, ValueTuple<T1> value, ExcelSerializerOptions options)
         {
             writer.EnterAndValidate();
@@ -34,8 +42,12 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class TupleExcelSerializer<T1, T2> : IExcelSerializer<Tuple<T1, T2>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2> value, ExcelSerializerOptions options, string name = "value"){
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            writer.Exit();
+        }
         public void Serialize(ref ExcelSerializerWriter writer, Tuple<T1, T2> value, ExcelSerializerOptions options)
         {
             if (value == null) {
@@ -51,8 +63,14 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class ValueTupleExcelSerializer<T1, T2> : IExcelSerializer<ValueTuple<T1, T2>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2> value, ExcelSerializerOptions options, string name = "value"){
+        {
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            writer.Exit();
+        }
+        }
         public void Serialize(ref ExcelSerializerWriter writer, ValueTuple<T1, T2> value, ExcelSerializerOptions options)
         {
             writer.EnterAndValidate();
@@ -64,8 +82,13 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class TupleExcelSerializer<T1, T2, T3> : IExcelSerializer<Tuple<T1, T2, T3>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3> value, ExcelSerializerOptions options, string name = "value"){
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            options.GetRequiredSerializer<T3>().WriteTitle(ref writer, value.Item3, options, $"{name}3");
+            writer.Exit();
+        }
         public void Serialize(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3> value, ExcelSerializerOptions options)
         {
             if (value == null) {
@@ -82,8 +105,15 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class ValueTupleExcelSerializer<T1, T2, T3> : IExcelSerializer<ValueTuple<T1, T2, T3>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3> value, ExcelSerializerOptions options, string name = "value"){
+        {
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            options.GetRequiredSerializer<T3>().WriteTitle(ref writer, value.Item3, options, $"{name}3");
+            writer.Exit();
+        }
+        }
         public void Serialize(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3> value, ExcelSerializerOptions options)
         {
             writer.EnterAndValidate();
@@ -96,8 +126,14 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class TupleExcelSerializer<T1, T2, T3, T4> : IExcelSerializer<Tuple<T1, T2, T3, T4>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4> value, ExcelSerializerOptions options, string name = "value"){
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            options.GetRequiredSerializer<T3>().WriteTitle(ref writer, value.Item3, options, $"{name}3");
+            options.GetRequiredSerializer<T4>().WriteTitle(ref writer, value.Item4, options, $"{name}4");
+            writer.Exit();
+        }
         public void Serialize(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4> value, ExcelSerializerOptions options)
         {
             if (value == null) {
@@ -115,8 +151,16 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class ValueTupleExcelSerializer<T1, T2, T3, T4> : IExcelSerializer<ValueTuple<T1, T2, T3, T4>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4> value, ExcelSerializerOptions options, string name = "value"){
+        {
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            options.GetRequiredSerializer<T3>().WriteTitle(ref writer, value.Item3, options, $"{name}3");
+            options.GetRequiredSerializer<T4>().WriteTitle(ref writer, value.Item4, options, $"{name}4");
+            writer.Exit();
+        }
+        }
         public void Serialize(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4> value, ExcelSerializerOptions options)
         {
             writer.EnterAndValidate();
@@ -130,8 +174,15 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class TupleExcelSerializer<T1, T2, T3, T4, T5> : IExcelSerializer<Tuple<T1, T2, T3, T4, T5>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4, T5> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4, T5> value, ExcelSerializerOptions options, string name = "value"){
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            options.GetRequiredSerializer<T3>().WriteTitle(ref writer, value.Item3, options, $"{name}3");
+            options.GetRequiredSerializer<T4>().WriteTitle(ref writer, value.Item4, options, $"{name}4");
+            options.GetRequiredSerializer<T5>().WriteTitle(ref writer, value.Item5, options, $"{name}5");
+            writer.Exit();
+        }
         public void Serialize(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4, T5> value, ExcelSerializerOptions options)
         {
             if (value == null) {
@@ -150,8 +201,17 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class ValueTupleExcelSerializer<T1, T2, T3, T4, T5> : IExcelSerializer<ValueTuple<T1, T2, T3, T4, T5>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4, T5> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4, T5> value, ExcelSerializerOptions options, string name = "value"){
+        {
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            options.GetRequiredSerializer<T3>().WriteTitle(ref writer, value.Item3, options, $"{name}3");
+            options.GetRequiredSerializer<T4>().WriteTitle(ref writer, value.Item4, options, $"{name}4");
+            options.GetRequiredSerializer<T5>().WriteTitle(ref writer, value.Item5, options, $"{name}5");
+            writer.Exit();
+        }
+        }
         public void Serialize(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4, T5> value, ExcelSerializerOptions options)
         {
             writer.EnterAndValidate();
@@ -166,8 +226,16 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class TupleExcelSerializer<T1, T2, T3, T4, T5, T6> : IExcelSerializer<Tuple<T1, T2, T3, T4, T5, T6>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4, T5, T6> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4, T5, T6> value, ExcelSerializerOptions options, string name = "value"){
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            options.GetRequiredSerializer<T3>().WriteTitle(ref writer, value.Item3, options, $"{name}3");
+            options.GetRequiredSerializer<T4>().WriteTitle(ref writer, value.Item4, options, $"{name}4");
+            options.GetRequiredSerializer<T5>().WriteTitle(ref writer, value.Item5, options, $"{name}5");
+            options.GetRequiredSerializer<T6>().WriteTitle(ref writer, value.Item6, options, $"{name}6");
+            writer.Exit();
+        }
         public void Serialize(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4, T5, T6> value, ExcelSerializerOptions options)
         {
             if (value == null) {
@@ -187,8 +255,18 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class ValueTupleExcelSerializer<T1, T2, T3, T4, T5, T6> : IExcelSerializer<ValueTuple<T1, T2, T3, T4, T5, T6>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4, T5, T6> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4, T5, T6> value, ExcelSerializerOptions options, string name = "value"){
+        {
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            options.GetRequiredSerializer<T3>().WriteTitle(ref writer, value.Item3, options, $"{name}3");
+            options.GetRequiredSerializer<T4>().WriteTitle(ref writer, value.Item4, options, $"{name}4");
+            options.GetRequiredSerializer<T5>().WriteTitle(ref writer, value.Item5, options, $"{name}5");
+            options.GetRequiredSerializer<T6>().WriteTitle(ref writer, value.Item6, options, $"{name}6");
+            writer.Exit();
+        }
+        }
         public void Serialize(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4, T5, T6> value, ExcelSerializerOptions options)
         {
             writer.EnterAndValidate();
@@ -204,8 +282,17 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class TupleExcelSerializer<T1, T2, T3, T4, T5, T6, T7> : IExcelSerializer<Tuple<T1, T2, T3, T4, T5, T6, T7>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4, T5, T6, T7> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4, T5, T6, T7> value, ExcelSerializerOptions options, string name = "value"){
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            options.GetRequiredSerializer<T3>().WriteTitle(ref writer, value.Item3, options, $"{name}3");
+            options.GetRequiredSerializer<T4>().WriteTitle(ref writer, value.Item4, options, $"{name}4");
+            options.GetRequiredSerializer<T5>().WriteTitle(ref writer, value.Item5, options, $"{name}5");
+            options.GetRequiredSerializer<T6>().WriteTitle(ref writer, value.Item6, options, $"{name}6");
+            options.GetRequiredSerializer<T7>().WriteTitle(ref writer, value.Item7, options, $"{name}7");
+            writer.Exit();
+        }
         public void Serialize(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4, T5, T6, T7> value, ExcelSerializerOptions options)
         {
             if (value == null) {
@@ -226,8 +313,19 @@ namespace FakeExcelSerializer.Serializers
 
     public sealed class ValueTupleExcelSerializer<T1, T2, T3, T4, T5, T6, T7> : IExcelSerializer<ValueTuple<T1, T2, T3, T4, T5, T6, T7>>
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4, T5, T6, T7> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4, T5, T6, T7> value, ExcelSerializerOptions options, string name = "value"){
+        {
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            options.GetRequiredSerializer<T3>().WriteTitle(ref writer, value.Item3, options, $"{name}3");
+            options.GetRequiredSerializer<T4>().WriteTitle(ref writer, value.Item4, options, $"{name}4");
+            options.GetRequiredSerializer<T5>().WriteTitle(ref writer, value.Item5, options, $"{name}5");
+            options.GetRequiredSerializer<T6>().WriteTitle(ref writer, value.Item6, options, $"{name}6");
+            options.GetRequiredSerializer<T7>().WriteTitle(ref writer, value.Item7, options, $"{name}7");
+            writer.Exit();
+        }
+        }
         public void Serialize(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4, T5, T6, T7> value, ExcelSerializerOptions options)
         {
             writer.EnterAndValidate();
@@ -245,8 +343,18 @@ namespace FakeExcelSerializer.Serializers
     public sealed class TupleExcelSerializer<T1, T2, T3, T4, T5, T6, T7, TRest> : IExcelSerializer<Tuple<T1, T2, T3, T4, T5, T6, T7, TRest>>
         where TRest : notnull
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, ExcelSerializerOptions options, string name = "value"){
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            options.GetRequiredSerializer<T3>().WriteTitle(ref writer, value.Item3, options, $"{name}3");
+            options.GetRequiredSerializer<T4>().WriteTitle(ref writer, value.Item4, options, $"{name}4");
+            options.GetRequiredSerializer<T5>().WriteTitle(ref writer, value.Item5, options, $"{name}5");
+            options.GetRequiredSerializer<T6>().WriteTitle(ref writer, value.Item6, options, $"{name}6");
+            options.GetRequiredSerializer<T7>().WriteTitle(ref writer, value.Item7, options, $"{name}7");
+            options.GetRequiredSerializer<TRest>().WriteTitle(ref writer, value.Rest, options, $"{name}8");
+            writer.Exit();
+        }
         public void Serialize(ref ExcelSerializerWriter writer, Tuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, ExcelSerializerOptions options)
         {
             if (value == null) {
@@ -269,8 +377,20 @@ namespace FakeExcelSerializer.Serializers
     public sealed class ValueTupleExcelSerializer<T1, T2, T3, T4, T5, T6, T7, TRest> : IExcelSerializer<ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest>>
         where TRest : struct
     {
-		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, ExcelSerializerOptions options, string name = "")
-            => writer.Write(name);
+		public void WriteTitle(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, ExcelSerializerOptions options, string name = "value"){
+        {
+            writer.EnterAndValidate();
+            options.GetRequiredSerializer<T1>().WriteTitle(ref writer, value.Item1, options, $"{name}1");
+            options.GetRequiredSerializer<T2>().WriteTitle(ref writer, value.Item2, options, $"{name}2");
+            options.GetRequiredSerializer<T3>().WriteTitle(ref writer, value.Item3, options, $"{name}3");
+            options.GetRequiredSerializer<T4>().WriteTitle(ref writer, value.Item4, options, $"{name}4");
+            options.GetRequiredSerializer<T5>().WriteTitle(ref writer, value.Item5, options, $"{name}5");
+            options.GetRequiredSerializer<T6>().WriteTitle(ref writer, value.Item6, options, $"{name}6");
+            options.GetRequiredSerializer<T7>().WriteTitle(ref writer, value.Item7, options, $"{name}7");
+            options.GetRequiredSerializer<TRest>().WriteTitle(ref writer, value.Rest, options, $"{name}8");
+            writer.Exit();
+        }
+        }
         public void Serialize(ref ExcelSerializerWriter writer, ValueTuple<T1, T2, T3, T4, T5, T6, T7, TRest> value, ExcelSerializerOptions options)
         {
             writer.EnterAndValidate();
