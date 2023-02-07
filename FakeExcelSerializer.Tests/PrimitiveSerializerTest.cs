@@ -66,7 +66,7 @@ namespace FakeExcelSerializer.Tests
                 serializer.Serialize(ref writer, value1, option);
                 serializer.Serialize(ref writer, value2, option);
                 Assert.Empty(writer.SharedStrings);
-                writer.ToString().Should().Be($"<c t=\"b\"><v>True</v></c><c t=\"b\"><v>False</v></c>");
+                writer.ToString().Should().Be($"<c t=\"b\"><v>1</v></c><c t=\"b\"><v>0</v></c>");
             }
             catch
             {

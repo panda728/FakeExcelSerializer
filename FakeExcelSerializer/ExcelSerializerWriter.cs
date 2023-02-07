@@ -211,13 +211,10 @@ public class ExcelSerializerWriter : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WritePrimitive(bool value)
     {
-        var s = $"{value}";
-
         _writer.Write(_colStartBoolean);
-        WriteUtf8Bytes(s);
+        WriteUtf8Bytes(value ? "1" : "0");
         _writer.Write(_colEnd);
-
-        SetMaxLength(s.Length);
+        SetMaxLength(1);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
