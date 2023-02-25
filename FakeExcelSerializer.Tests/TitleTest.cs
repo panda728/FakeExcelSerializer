@@ -112,7 +112,7 @@ namespace FakeExcelSerializer.Tests
         public void Serializer_tuple2()
         {
             var t = Tuple.Create(1, 2);
-            RunTest(t, "value1", "<c t=\"s\"><v>0</v></c><c t=\"s\"><v>1</v></c>", ExcelSerializerOptions.Default);
+            RunTest(t, "value", "<c t=\"s\"><v>0</v></c><c t=\"s\"><v>1</v></c>", ExcelSerializerOptions.Default);
         }
         [Fact]
         public void Serializer_IDictionary()
