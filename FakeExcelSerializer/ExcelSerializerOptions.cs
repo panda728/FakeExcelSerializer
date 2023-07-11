@@ -12,6 +12,7 @@ public record ExcelSerializerOptions(IExcelSerializerProvider Provider)
 
     public int MaxDepth { get; init; } = 64;
 
+    public bool AutoFilter { get; init; } = false;
     public bool AutoFitColumns { get; init; } = false;
     public int AutoFitDepth { get; init; } = 200;
     public int AutoFitWidhtMax { get; init; } = 100;

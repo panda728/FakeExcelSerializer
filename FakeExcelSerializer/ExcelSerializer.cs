@@ -79,6 +79,9 @@ public static class ExcelSerializer
     readonly static byte[] _dataStart = Encoding.UTF8.GetBytes(@"<sheetData>");
     readonly static byte[] _dataEnd = Encoding.UTF8.GetBytes(@"</sheetData>");
 
+    readonly static byte[] _autoFilterStart = Encoding.UTF8.GetBytes(@"<autoFilter ref=""");
+    readonly static byte[] _autoFilterEnd = Encoding.UTF8.GetBytes(@"""/>");
+
     readonly static byte[] _sstStart = Encoding.UTF8.GetBytes(@"<sst xmlns=""http://schemas.openxmlformats.org/spreadsheetml/2006/main"">");
     //readonly byte[] _sstStart = Encoding.UTF8.GetBytes(@"<sst xmlns=""http://schemas.openxmlformats.org/spreadsheetml/2006/main"" uniqueCount=""1"">");
     readonly static byte[] _sstEnd = Encoding.UTF8.GetBytes(@"</sst>");
@@ -86,6 +89,14 @@ public static class ExcelSerializer
     readonly static byte[] _siEnd = Encoding.UTF8.GetBytes("</t></si>");
 
     const int COLUMN_WIDTH_MARGIN = 2;
+    private const string CONTENT_TYPE_XML = "[Content_Types].xml";
+    private const string SHEET_XML = "sheet.xml";
+    private const string STRINGS_XML = "strings.xml";
+    private const string RELS = "_rels";
+    private const string BOOK_XML = "book.xml";
+    private const string STYLES_XML = "styles.xml";
+    private const string BOOK_XML_RELS = "book.xml.rels";
+    private const string DOT_RELS = ".rels";
 
     public static void ToFile<T>(IEnumerable<T> rows, string fileName, ExcelSerializerOptions options)
     {
@@ -97,15 +108,15 @@ public static class ExcelSerializer
             Directory.CreateDirectory(workPathRoot);
         try
         {
-            using (var sheetStream = CreateStream(Path.Combine(workPathRoot, "sheet.xml")))
-            using (var stringsStream = CreateStream(Path.Combine(workPathRoot, "strings.xml")))
+            using (var sheetStream = CreateStream(Path.Combine(workPathRoot, SHEET_XML)))
+            using (var stringsStream = CreateStream(Path.Combine(workPathRoot, STRINGS_XML)))
             using (var writer = new ExcelSerializerWriter(options))
             {
                 CreateSheet(rows, sheetStream, writer, options);
                 WriteSharedStrings(stringsStream, writer);
             }
 
-            var workRelPath = Path.Combine(workPathRoot, "_rels");
+            var workRelPath = Path.Combine(workPathRoot, RELS);
             if (!Directory.Exists(workRelPath))
                 Directory.CreateDirectory(workRelPath);
 
@@ -118,11 +129,11 @@ public static class ExcelSerializer
                 options.NumberFormat
             ));
 
-            WriteStream(_contentTypes, Path.Combine(workPathRoot, "[Content_Types].xml"));
-            WriteStream(_book, Path.Combine(workPathRoot, "book.xml"));
-            WriteStream(_stylesBytes, Path.Combine(workPathRoot, "styles.xml"));
-            WriteStream(_rels, Path.Combine(workRelPath, ".rels"));
-            WriteStream(_bookRels, Path.Combine(workRelPath, "book.xml.rels"));
+            WriteStream(_contentTypes, Path.Combine(workPathRoot, CONTENT_TYPE_XML));
+            WriteStream(_book, Path.Combine(workPathRoot, BOOK_XML));
+            WriteStream(_stylesBytes, Path.Combine(workPathRoot, STYLES_XML));
+            WriteStream(_rels, Path.Combine(workRelPath, DOT_RELS));
+            WriteStream(_bookRels, Path.Combine(workRelPath, BOOK_XML_RELS));
 
             if (File.Exists(fileName))
                 File.Delete(fileName);
@@ -200,8 +211,38 @@ public static class ExcelSerializer
 #endif
         }
         writer.WriteRaw(_dataEnd);
+
+        if (options.AutoFilter)
+        {
+            var colName = options.HeaderTitles != null && options.HeaderTitles.Any()
+                ? ToColumnName(options.HeaderTitles.Length)
+                : ToColumnName(writer.ColumnMaxLength.Count);
+
+            var range = $"A1:{colName}{rows.Count() + 1}";
+            writer.WriteRaw(_autoFilterStart);
+            writer.WriteRaw(Encoding.UTF8.GetBytes(range));
+            writer.WriteRaw(_autoFilterEnd);
+        }
+
         writer.WriteRaw(_sheetEnd);
         writer.CopyTo(stream);
+    }
+    static string ToColumnName(int index)
+    {
+        if (index < 1) { return ""; }
+        var list = new List<char>();
+        index--;
+        do
+        {
+            list.Add(Convert.ToChar(index % 26 + 65));
+        }
+        while ((index = index / 26 - 1) != -1);
+        var sb = new StringBuilder();
+        for (int i = list.Count - 1; i >= 0; i--)
+        {
+            sb.Append(list[i]);
+        }
+        return sb.ToString();
     }
 
     static void WriteRowsSpan<T>(

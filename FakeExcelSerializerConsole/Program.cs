@@ -45,7 +45,7 @@ var testUsers = new Faker<User>()
     .RuleFor(o => o.Char, f => (char)f.Random.Int(65, 65 + 26))
     .RuleFor(o => o.Escape, f => "</>\"'&");
 
-var Users = testUsers.Generate(100000);
+var Users = testUsers.Generate(10);
 
 sw.Stop();
 Console.WriteLine($"testUsers.Generate count:{Users.Count:#,##0} duration:{sw.ElapsedMilliseconds:#,##0}ms");
@@ -60,6 +60,7 @@ var newConfig = ExcelSerializerOptions.Default with
         new[] { ExcelSerializerProvider.Default }),
     HasHeaderRecord = true,
     AutoFitColumns = true,
+    AutoFilter = true,
 };
 
 var fileName = Path.Combine(Environment.CurrentDirectory, "test.xlsx");
