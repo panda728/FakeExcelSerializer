@@ -99,6 +99,18 @@ var newConfig = ExcelSerializerOptions.Default with
 ExcelSerializer.ToFile(potals, @"c:\test\potalsOp.xlsx", newConfig);
 ~~~
 
+## Example-5
+Optionally supports Autofilter.  
+
+var newConfig = ExcelSerializerOptions.Default with
+{
+    CultureInfo = CultureInfo.InvariantCulture,
+    HasHeaderRecord = true,
+    HeaderTitles = new string[] { "Name", "Owner", "Level" },
+    AutoFitlter = true,
+};
+ExcelSerializer.ToFile(potals, @"c:\test\potalsOp.xlsx", newConfig);
+
 ## Note
 For the method of retrieving values from IEnumerable\<T\>, Cysharp's WebSerializer method is used.
 
